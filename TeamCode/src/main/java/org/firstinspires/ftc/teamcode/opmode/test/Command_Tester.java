@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -17,22 +18,20 @@ import java.util.function.BooleanSupplier;
 public class Command_Tester extends CommandOpMode {
     private Robot robot;
     private DifferentialDriveOdometry odometry;
-    private GamepadEx gamepad;
-
     private BooleanSupplier outtake;
+    private boolean extend;
 
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
-        gamepad = new GamepadEx(gamepad1);
-
         outtake = () -> gamepad1.b;
     }
 
     @Override
     public void run() {
         super.run();
+
 
         robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
 
@@ -44,7 +43,13 @@ public class Command_Tester extends CommandOpMode {
                 imu, right_position, left_position
         );
 
-        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new SharedCommand(robot, 1, true, outtake));
+
+        boolean a = gamepad1.a;
+        if (a && !extend) {
+            schedule(new SharedCommand(robot, 1, true, outtake));
+        }
+        extend = a;
+
 
         Pose2d currentRobotPose = odometry.getPoseMeters();
 
@@ -54,5 +59,7 @@ public class Command_Tester extends CommandOpMode {
         telemetry.addLine(currentRobotPose.toString());
         telemetry.addData("arm ", robot.arm.pos());
         telemetry.update();
+
+        System.out.println("loop");
     }
 }

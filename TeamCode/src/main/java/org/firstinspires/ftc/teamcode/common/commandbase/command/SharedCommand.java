@@ -13,12 +13,12 @@ import java.util.function.BooleanSupplier;
 public class SharedCommand extends SequentialCommandGroup {
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake) {
         super(
-                new InstantCommand(() -> robot.intake.setPower(-1)),
+                new InstantCommand(robot.intake::reverse),
                 new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new WaitUntilCommand(() -> robot.arm.pos() > 400),
                 new InstantCommand(() -> robot.turret.turn(turret)),
-                new InstantCommand(()->robot.intake.setPower(0)),
+                new InstantCommand(robot.intake::stop),
                 new WaitUntilCommand(() -> robot.arm.pos() > 600),
                 new InstantCommand(() -> robot.arm.linkage(extend)),
                 new WaitUntilCommand(() -> robot.arm.pos() > 1800),
@@ -30,7 +30,7 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.arm.linkageIn()),
                 new InstantCommand(() -> robot.arm.armIn()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 100),
-                new InstantCommand(() -> robot.intake.setPower(1))
+                new InstantCommand(()->robot.intake.start())
 
         );
     }

@@ -29,7 +29,7 @@ public class Subsystem_Tester extends CommandOpMode {
 
         robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
 
-        Rotation2d imu = new Rotation2d(robot.imu.getAngularOrientation().firstAngle);
+        Rotation2d imu = new Rotation2d(-robot.imu.getAngularOrientation().firstAngle);
         double right_position = robot.right_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
         double left_position = robot.left_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
 
@@ -51,15 +51,7 @@ public class Subsystem_Tester extends CommandOpMode {
         gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(() -> robot.bucket.dump());
         gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(() -> robot.bucket.rest());
 
-        gamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(() -> {
-            if (robot.intake.getPower() == 0) {
-                robot.intake.setPower(1);
-            } else if (robot.intake.getPower() == 1) {
-                robot.intake.setPower(-1);
-            } else {
-                robot.intake.setPower(0);
-            }
-        });
+        gamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(() -> robot.intake.toggle());
 
 
         telemetry.addData("imu ", imu.toString());

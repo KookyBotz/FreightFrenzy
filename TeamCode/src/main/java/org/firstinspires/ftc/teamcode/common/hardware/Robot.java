@@ -1,11 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -20,6 +14,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Arm;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Bucket;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Intake;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Turret;
 
 public class Robot {
@@ -37,7 +32,7 @@ public class Robot {
 
     public Bucket bucket;
 
-    public DcMotorEx intake;
+    public Intake intake;
 
     public Robot(HardwareMap hardwareMap) {
         MotorEx left_back = new MotorEx(hardwareMap, "lb", Motor.GoBILDA.RPM_435);
@@ -93,7 +88,8 @@ public class Robot {
 
         arm = new Arm(a, l);
 
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        MotorEx i = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
+        intake = new Intake(i);
 
         Servo d = hardwareMap.get(Servo.class, "dump");
         bucket = new Bucket(d);
