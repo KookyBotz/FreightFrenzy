@@ -28,7 +28,7 @@ public class PurePursuitPath {
         Waypoint b = waypoints.get(current + 1);
         double radius = b.radius;
 
-        if (current == waypoints.size() - 2 && robot.distanceTo(b) < PurePursuit.admissible_error) {
+        if (current == waypoints.size() - 2 && robot.distanceTo(b) < PurePursuitUtil.admissible_error) {
             finished = true;
             return new ArrayList<>(Collections.nCopies(2, 0.0));
         } else if (current == waypoints.size() - 2 && robot.distanceTo(b) < radius) {
@@ -61,7 +61,7 @@ public class PurePursuitPath {
 
         }
 
-        Point target = PurePursuit.lineCircleIntersection(a, b, robot, radius);
+        Point target = PurePursuitUtil.lineCircleIntersection(a, b, robot, radius);
 
         double angle = Math.toDegrees(target.subtract(robot).atan());
         //double reverse_angle = Math.toDegrees(Math.toRadians(angle + 180));
@@ -69,11 +69,11 @@ public class PurePursuitPath {
         //        Math.abs(robot.angle - reverse_angle) ?
         //        angle : reverse_angle;
 
-        double angle_power = angle / PurePursuit.P_coefficients.angle;
+        double angle_power = angle / PurePursuitUtil.P_coefficients.angle;
 
         ArrayList<Double> powers = new ArrayList<>();
-        powers.add(PurePursuit.default_power + angle_power);
-        powers.add(PurePursuit.default_power - angle_power);
+        powers.add(PurePursuitUtil.default_power + angle_power);
+        powers.add(PurePursuitUtil.default_power - angle_power);
 
         return powers;
     }

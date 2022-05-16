@@ -3,15 +3,13 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.command.PurePursuitCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
-import org.firstinspires.ftc.teamcode.common.purepursuit.PurePursuit;
+import org.firstinspires.ftc.teamcode.common.purepursuit.PurePursuitUtil;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Point;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Waypoint;
@@ -36,8 +34,11 @@ public class PurePursuitTest extends OpMode {
 
         waypoints = new ArrayList<>();
         waypoints.add(new Waypoint(0, 0, 0));
-        waypoints.add(new Waypoint(20, 0, 12));
-        waypoints.add(new Waypoint(20, 36, 12));
+        waypoints.add(new Waypoint(20, 0, 6));
+        waypoints.add(new Waypoint(20, 36, 6));
+
+
+
     }
 
     @Override
@@ -56,22 +57,31 @@ public class PurePursuitTest extends OpMode {
         Waypoint b = waypoints.get(current + 1);
         double radius = b.radius;
 
-        if (current == waypoints.size() - 2 && robot.distanceTo(b) < radius) {
+        if (current == waypoints.size() - 2 && Math.abs(robot.distanceTo(b)) < radius) {
             this.robot.drive.tankDrive(0, 0);
-        } else if (robot.distanceTo(b) < radius) {
+        } else if (Math.abs(robot.distanceTo(b)) < radius) {
             current++;
             a = waypoints.get(current);
             b = waypoints.get(current + 1);
         } else {
-            Point target = PurePursuit.lineCircleIntersection(a, b, robot, radius);
-            telemetry.addData("target: ", target.toString());
-            double angle = Math.toDegrees(target.subtract(robot).atan()) - robot.angle;
-            telemetry.addData("angle: ", angle);
-            double angle_power = angle / PurePursuit.P_coefficients.angle;
-            telemetry.addData("turn power: ", angle_power);
-            telemetry.addData("turn power", angle_power);
+            Point target = PurePursuitUtil.lineCircleIntersection(a, b, robot, radius);
 
-            this.robot.drive.tankDrive(PurePursuit.default_power + angle_power, PurePursuit.default_power - angle_power);
+            double x = PurePursuitUtil.getX(robot, target);
+            double curvature = PurePursuitUtil.getCurvature(x, radius);
+            double signed_curvature = PurePursuitUtil.getSign(robot, target) * curvature;
+
+
+            List<Double> powers = PurePursuitUtil.calculateWheelSpeeds(signed_curvature, 0.3, 8.3);
+
+
+            telemetry.addData("tan", Math.tan(Math.toRadians(robot.angle)));
+            telemetry.addData("x ", x);
+            telemetry.addData("c ", curvature);
+            telemetry.addData("signed ", signed_curvature);
+            telemetry.addData("p ", powers.toString());
+            this.robot.drive.tankDrive(powers.get(1), powers.get(0));
+
+            Point heading_line = new Point(robot.x, robot.y).rotated(Math.toRadians(-robot.angle)).add(new Point(10, 0)).rotated(Math.toRadians(robot.angle));
 
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay()
@@ -80,6 +90,7 @@ public class PurePursuitTest extends OpMode {
                     .setStroke("blue")
                     .strokeCircle(robot.x, robot.y, radius)
                     .strokeCircle(robot.x, robot.y, 1)
+                    .strokeLine(robot.x, robot.y, heading_line.x, heading_line.y)
                     .setStroke("red")
                     .strokeCircle(target.x, target.y, 1);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
