@@ -34,9 +34,8 @@ public class PurePursuitTest extends OpMode {
 
         waypoints = new ArrayList<>();
         waypoints.add(new Waypoint(0, 0, 0));
-        waypoints.add(new Waypoint(20, 0, 6));
-        waypoints.add(new Waypoint(20, 36, 6));
-
+        waypoints.add(new Waypoint(20, 0, 8.5));
+        waypoints.add(new Waypoint(20, 36, 8.5));
 
 
     }
@@ -68,16 +67,15 @@ public class PurePursuitTest extends OpMode {
 
             double x = PurePursuitUtil.getX(robot, target);
             double curvature = PurePursuitUtil.getCurvature(x, radius);
-            double signed_curvature = PurePursuitUtil.getSign(robot, target) * curvature;
+            double sign = PurePursuitUtil.getSign(robot, target);
 
-
-            List<Double> powers = PurePursuitUtil.calculateWheelSpeeds(signed_curvature, 0.3, 8.3);
+            List<Double> powers = PurePursuitUtil.calculateWheelSpeeds(robot, target, curvature, sign, 0.2, 8.3);
 
 
             telemetry.addData("tan", Math.tan(Math.toRadians(robot.angle)));
             telemetry.addData("x ", x);
             telemetry.addData("c ", curvature);
-            telemetry.addData("signed ", signed_curvature);
+            telemetry.addData("signed ", sign);
             telemetry.addData("p ", powers.toString());
             this.robot.drive.tankDrive(powers.get(1), powers.get(0));
 

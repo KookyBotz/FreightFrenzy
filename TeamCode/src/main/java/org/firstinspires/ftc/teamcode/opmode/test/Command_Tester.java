@@ -34,6 +34,7 @@ public class Command_Tester extends CommandOpMode {
 
 
         robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
+        robot.arm.loop();
 
         Rotation2d imu = new Rotation2d(robot.imu.getAngularOrientation().firstAngle);
         double right_position = robot.right_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;

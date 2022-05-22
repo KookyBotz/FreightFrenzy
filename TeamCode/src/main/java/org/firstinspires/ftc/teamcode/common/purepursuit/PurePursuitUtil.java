@@ -56,19 +56,43 @@ public class PurePursuitUtil {
     }
 
     public static double getSign(Pose robot, Point intersection) {
-        return Math.signum(Math.sin(Math.toRadians(robot.angle)) * (intersection.x - robot.x) - Math.cos(Math.toRadians(robot.angle)) * (intersection.y - robot.y));
+        return -Math.signum(Math.sin(Math.toRadians(robot.angle)) * (intersection.x - robot.x) - Math.cos(Math.toRadians(robot.angle)) * (intersection.y - robot.y));
     }
 
-    public static double getSignedCurvature(Pose robot, Point intersection, double radius) {
-        return getCurvature(getX(robot, intersection), radius) * getSign(robot, intersection);
-    }
+    public static List<Double> calculateWheelSpeeds(Pose robot, Point intersection, double curvature, double sign, double target_velocity, double track_width) {
+        double d = robot.distanceTo(intersection);
+        double arc_radius = 1 / curvature;
 
-    public static List<Double> calculateWheelSpeeds(double signed_curvature, double target_velocity, double track_width) {
-        double left = target_velocity * (2 + signed_curvature * track_width) / 2;
-        double right = target_velocity * (2 - signed_curvature * track_width) / 2;
+        double theta = Math.acos(1 - ((d * d) / (2 * arc_radius * arc_radius)));
+
+        System.out.println("theta: " + theta);
+        System.out.println("main arc length " + theta * arc_radius);
+
+        double left_radius = arc_radius + track_width / 2;
+        double right_radius = arc_radius - track_width / 2;
+        double left_arc = left_radius * theta;
+        double right_arc = right_radius * theta;
+
+        System.out.println(left_arc);
+        System.out.println(right_arc);
+
+        double max = Math.max(Math.abs(left_arc), Math.abs(right_arc));
+
+        left_arc /= max;
+        right_arc /= max;
+
+        left_arc *= target_velocity;
+        right_arc *= target_velocity;
+
         List<Double> powers = new ArrayList<>();
-        powers.add(left);
-        powers.add(right);
+        if (sign == -1) {
+            powers.add(left_arc);
+            powers.add(right_arc);
+        } else {
+            powers.add(right_arc);
+            powers.add(left_arc);
+        }
+
 
         return powers;
     }

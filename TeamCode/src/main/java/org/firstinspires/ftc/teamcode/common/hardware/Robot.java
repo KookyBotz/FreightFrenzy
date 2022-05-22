@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -86,12 +87,16 @@ public class Robot {
 
         Servo l = hardwareMap.get(Servo.class, "linkage");
 
-        arm = new Arm(a, l);
+        arm = new Arm(a, l, batteryVoltageSensor);
 
         MotorEx i = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
         intake = new Intake(i);
 
         Servo d = hardwareMap.get(Servo.class, "dump");
         bucket = new Bucket(d);
+
+        for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
     }
 }
