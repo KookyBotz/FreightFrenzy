@@ -42,9 +42,12 @@ public class Subsystem_Tester extends CommandOpMode {
 
         Pose2d currentRobotPose = odometry.getPoseMeters();
 
-        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(() -> robot.turret.middle());
-        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> robot.turret.right());
-        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> robot.turret.left());
+
+        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(()->robot.bucket.close());
+        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(()->robot.bucket.open());
+//        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(() -> robot.turret.middle());
+//        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> robot.turret.right());
+//        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> robot.turret.left());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(() -> robot.arm.armIn());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> robot.arm.armShared());
 //        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(() -> robot.arm.linkageIn());

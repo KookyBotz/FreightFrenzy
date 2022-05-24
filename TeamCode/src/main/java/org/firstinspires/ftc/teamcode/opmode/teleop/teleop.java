@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.test;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import java.util.function.BooleanSupplier;
 
 @TeleOp
-public class Command_Tester extends CommandOpMode {
+public class teleop extends CommandOpMode {
     private Robot robot;
     private DifferentialDriveOdometry odometry;
     private BooleanSupplier outtake;
@@ -59,6 +59,7 @@ public class Command_Tester extends CommandOpMode {
         telemetry.addData("right ", right_position);
         telemetry.addLine(currentRobotPose.toString());
         telemetry.addData("arm ", robot.arm.pos());
+        telemetry.addData("has freight ", robot.bucket.hasFreight());
         telemetry.update();
 
         System.out.println("loop");

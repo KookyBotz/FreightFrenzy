@@ -9,6 +9,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -93,7 +94,9 @@ public class Robot {
         intake = new Intake(i);
 
         Servo d = hardwareMap.get(Servo.class, "dump");
-        bucket = new Bucket(d);
+        Servo g = hardwareMap.get(Servo.class, "gate");
+        DistanceSensor ds = hardwareMap.get(DistanceSensor.class, "distance");
+        bucket = new Bucket(d, g, ds);
 
         for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
