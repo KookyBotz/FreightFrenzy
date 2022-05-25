@@ -25,8 +25,8 @@ public class Arm_Test extends OpMode {
 
     public static double kcos = 0.2;
 
-    public static double max_v = 200;
-    public static double max_a = 100;
+    public static double max_v = 8000;
+    public static double max_a = 10000;
 
     public static double p, i, d;
     private double pp, pi, pd;
@@ -52,7 +52,7 @@ public class Arm_Test extends OpMode {
             controller.setPID(p, i, d);
         }
 
-        if(target != previous_target){
+        if (target != previous_target) {
             profile = MotionProfileGenerator.generateSimpleMotionProfile(new MotionState(previous_target, 0), new MotionState(target, 0), max_v, max_a);
             time.reset();
             previous_target = target;
@@ -63,7 +63,7 @@ public class Arm_Test extends OpMode {
         pd = d;
 
         int arm = robot.arm.pos();
-        MotionState targetState = profile.get(time.seconds());
+        MotionState targetState = profile == null ? new MotionState(0, 0) : profile.get(time.seconds());
         double target = targetState.getX();
         double pid = controller.calculate(arm, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * kcos;

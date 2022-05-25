@@ -13,19 +13,24 @@ import org.firstinspires.ftc.teamcode.common.commandbase.command.SharedCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 @TeleOp
 public class teleop extends CommandOpMode {
     private Robot robot;
     private DifferentialDriveOdometry odometry;
     private BooleanSupplier outtake;
+    private Consumer<Boolean> done;
+    private boolean intake = true;
     private boolean extend;
+    private double loop = 0;
 
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
         outtake = () -> gamepad1.b;
+        done = (a) -> intake = a;
 
         robot.turret.middle();
         robot.arm.linkageIn();
@@ -40,31 +45,39 @@ public class teleop extends CommandOpMode {
 
         robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
         robot.arm.loop();
-
-        Rotation2d imu = new Rotation2d(robot.imu.getAngularOrientation().firstAngle);
-        double right_position = robot.right_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
-        double left_position = robot.left_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
-
-        odometry.update(
-                imu, right_position, left_position
-        );
+//
+//        Rotation2d imu = new Rotation2d(robot.imu.getAngularOrientation().firstAngle);
+//        double right_position = robot.right_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
+//        double left_position = robot.left_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
+//
+//        odometry.update(
+//                imu, right_position, left_position
+//        );
+//        Pose2d currentRobotPose = odometry.getPoseMeters();
 
 
         boolean a = gamepad1.a;
         if (a && !extend) {
-            schedule(new SharedCommand(robot, 1, false, outtake));
+            schedule(new SharedCommand(robot, 2, false, outtake));
         }
         extend = a;
 
+        if (intake && robot.bucket.hasFreight()) {
+            intake = false;
+            schedule(new SharedCommand(robot, 2, false, outtake, done));
+        }
 
-        Pose2d currentRobotPose = odometry.getPoseMeters();
 
-        telemetry.addData("imu ", imu.toString());
-        telemetry.addData("left ", left_position);
-        telemetry.addData("right ", right_position);
-        telemetry.addLine(currentRobotPose.toString());
-        telemetry.addData("arm ", robot.arm.pos());
-        telemetry.addData("has freight ", robot.bucket.hasFreight());
+        double curr = System.currentTimeMillis();
+        telemetry.addData("time since  last loop", curr - loop);
+        loop = curr;
+
+//        telemetry.addData("imu ", imu.toString());
+//        telemetry.addData("left ", left_position);
+//        telemetry.addData("right ", right_position);
+//        telemetry.addLine(currentRobotPose.toString());
+//        telemetry.addData("arm ", robot.arm.pos());
+//        telemetry.addData("has freight ", robot.bucket.hasFreight());
         telemetry.update();
 
         System.out.println("loop");

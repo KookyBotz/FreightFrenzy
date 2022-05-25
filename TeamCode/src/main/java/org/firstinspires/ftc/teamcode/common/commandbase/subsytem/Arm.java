@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsytem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
+import com.acmerobotics.roadrunner.profile.MotionState;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -8,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 public class Arm extends SubsystemBase {
@@ -24,8 +28,15 @@ public class Arm extends SubsystemBase {
     private final double ticks_to_degrees = 700 / 180.0;
 
     private final PIDController controller;
+    private ElapsedTime time;
 
-    private double target = 0;
+    private MotionProfile profile;
+    public static double max_v = 8000;
+    public static double max_a = 10000;
+
+    private int target = 22;
+    private int previous_target = 22;
+
 
     public Arm(DcMotorEx a, Servo l, VoltageSensor b) {
         arm = a;
@@ -34,11 +45,20 @@ public class Arm extends SubsystemBase {
         controller = new PIDController(p, 0, d);
         controller.setPID(p, 0, d);
         this.batteryVoltageSensor = b;
+        time = new ElapsedTime();
     }
 
     public void loop() {
-        int pos = arm.getCurrentPosition();
-        double pid = controller.calculate(pos, target);
+        if (target != previous_target) {
+            profile = MotionProfileGenerator.generateSimpleMotionProfile(new MotionState(previous_target, 0), new MotionState(target, 0), max_v, max_a);
+            time.reset();
+            previous_target = target;
+        }
+
+        int armpos = arm.getCurrentPosition();
+        MotionState targetState = profile == null ? new MotionState(0, 0) : profile.get(time.seconds());
+        double target = targetState.getX();
+        double pid = controller.calculate(armpos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_to_degrees)) * kcos;
 
         double power = (pid + ff) * batteryVoltageSensor.getVoltage() / 12.0;
@@ -47,11 +67,11 @@ public class Arm extends SubsystemBase {
     }
 
     public void armIn() {
-        target = 0;
+        target = 22;
     }
 
     public void armShared() {
-        target = 675;
+        target = 700;
     }
 
     public void linkageIn() {
