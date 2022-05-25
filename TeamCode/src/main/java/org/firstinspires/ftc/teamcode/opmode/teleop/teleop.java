@@ -26,6 +26,11 @@ public class teleop extends CommandOpMode {
         robot = new Robot(hardwareMap);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
         outtake = () -> gamepad1.b;
+
+        robot.turret.middle();
+        robot.arm.linkageIn();
+        robot.bucket.in();
+
     }
 
     @Override
@@ -47,7 +52,7 @@ public class teleop extends CommandOpMode {
 
         boolean a = gamepad1.a;
         if (a && !extend) {
-            schedule(new SharedCommand(robot, 1, true, outtake));
+            schedule(new SharedCommand(robot, 1, false, outtake));
         }
         extend = a;
 
