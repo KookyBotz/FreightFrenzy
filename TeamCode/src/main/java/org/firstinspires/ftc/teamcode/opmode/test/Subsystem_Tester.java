@@ -16,7 +16,7 @@ public class Subsystem_Tester extends CommandOpMode {
     private DifferentialDriveOdometry odometry;
     private GamepadEx gamepad;
 
-    private double time = 0;
+        private double time = 0;
 
     @Override
     public void initialize() {
@@ -43,9 +43,9 @@ public class Subsystem_Tester extends CommandOpMode {
         Pose2d currentRobotPose = odometry.getPoseMeters();
 
 
-        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(()->robot.bucket.close());
-        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(()->robot.bucket.open());
-//        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(() -> robot.turret.middle());
+//        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(()->robot.bucket.close());
+//        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(()->robot.bucket.open());
+        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(() -> robot.turret.middle());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> robot.turret.right());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> robot.turret.left());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(() -> robot.arm.armIn());

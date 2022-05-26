@@ -18,7 +18,6 @@ import java.util.function.Consumer;
 @TeleOp
 public class teleop extends CommandOpMode {
     private Robot robot;
-    private DifferentialDriveOdometry odometry;
     private BooleanSupplier outtake;
     private Consumer<Boolean> done;
     private boolean intake = true;
@@ -28,20 +27,19 @@ public class teleop extends CommandOpMode {
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
-        odometry = new DifferentialDriveOdometry(new Rotation2d(0));
         outtake = () -> gamepad1.b;
         done = (a) -> intake = a;
 
         robot.turret.middle();
         robot.arm.linkageIn();
         robot.bucket.in();
-
     }
 
     @Override
     public void run() {
         super.run();
-
+        double update = System.currentTimeMillis();
+        telemetry.addData("command scheduler update time ", update - loop);
 
         robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
         robot.arm.loop();
@@ -69,8 +67,7 @@ public class teleop extends CommandOpMode {
 
 
         double curr = System.currentTimeMillis();
-        telemetry.addData("time since  last loop", curr - loop);
-        loop = curr;
+        telemetry.addData("loop time", curr - loop);
 
 //        telemetry.addData("imu ", imu.toString());
 //        telemetry.addData("left ", left_position);
@@ -80,6 +77,6 @@ public class teleop extends CommandOpMode {
 //        telemetry.addData("has freight ", robot.bucket.hasFreight());
         telemetry.update();
 
-        System.out.println("loop");
+        loop = System.currentTimeMillis();
     }
 }

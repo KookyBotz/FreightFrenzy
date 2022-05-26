@@ -13,7 +13,7 @@ public class Bucket extends SubsystemBase {
     private final Servo gate;
     private final DistanceSensor distance;
 
-    public static double in_position = 0.68;
+    public static double in_position = 0.7;
     public static double rest_position = 0.6;
     public static double dump_position = 0.9;
 

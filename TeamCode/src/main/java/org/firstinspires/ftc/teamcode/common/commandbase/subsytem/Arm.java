@@ -31,11 +31,11 @@ public class Arm extends SubsystemBase {
     private ElapsedTime time;
 
     private MotionProfile profile;
-    public static double max_v = 8000;
-    public static double max_a = 10000;
+    public static double max_v = 10000;
+    public static double max_a = 8000;
 
-    private int target = 22;
-    private int previous_target = 22;
+    private int target = 12;
+    private int previous_target = 12;
 
 
     public Arm(DcMotorEx a, Servo l, VoltageSensor b) {
@@ -67,7 +67,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void armIn() {
-        target = 22;
+        target = 12;
     }
 
     public void armShared() {
