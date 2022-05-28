@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Arm;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Bucket;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Intake;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Turret;
+import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
 public class Robot {
     public DifferentialDrive drive;
@@ -91,12 +93,17 @@ public class Robot {
         arm = new Arm(a, l, batteryVoltageSensor);
 
         MotorEx i = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
+        i.motorEx.setDirection(DcMotorSimple.Direction.REVERSE);
         intake = new Intake(i);
 
         Servo d = hardwareMap.get(Servo.class, "dump");
         Servo g = hardwareMap.get(Servo.class, "gate");
-        DistanceSensor ds = hardwareMap.get(DistanceSensor.class, "distance");
-        bucket = new Bucket(d, g, ds);
+
+        Rev2mDistanceSensor ds = hardwareMap.get(Rev2mDistanceSensor.class, "distance");
+        AsyncRev2MSensor asyncSensor = new AsyncRev2MSensor(ds);
+        asyncSensor.setSensorAccuracyMode(AsyncRev2MSensor.AccuracyMode.MODE_HIGH_SPEED);
+
+        bucket = new Bucket(d, g, asyncSensor);
 
         for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

@@ -6,12 +6,13 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
 @Config
 public class Bucket extends SubsystemBase {
     private final Servo dump;
     private final Servo gate;
-    private final DistanceSensor distance;
+    private final AsyncRev2MSensor distance;
 
     public static double in_position = 0.7;
     public static double rest_position = 0.6;
@@ -20,7 +21,7 @@ public class Bucket extends SubsystemBase {
     public static double gate_closed = 0.6;
     public static double gate_open = 1;
 
-    public Bucket(Servo d, Servo g, DistanceSensor ds) {
+    public Bucket(Servo d, Servo g, AsyncRev2MSensor ds) {
         dump = d;
         gate = g;
         distance = ds;

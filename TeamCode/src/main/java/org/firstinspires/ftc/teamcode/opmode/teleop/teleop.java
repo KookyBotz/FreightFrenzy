@@ -42,7 +42,16 @@ public class teleop extends CommandOpMode {
         telemetry.addData("command scheduler update time ", update - loop);
 
         robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
+
+        double drive = System.currentTimeMillis();
+        telemetry.addData("drive update time ", drive - update);
+
+
         robot.arm.loop();
+
+        double arm = System.currentTimeMillis();
+        telemetry.addData("arm update time ", arm - drive);
+
 //
 //        Rotation2d imu = new Rotation2d(robot.imu.getAngularOrientation().firstAngle);
 //        double right_position = robot.right_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
@@ -60,14 +69,21 @@ public class teleop extends CommandOpMode {
         }
         extend = a;
 
+        double manual = System.currentTimeMillis();
+        telemetry.addData("manual update time ", manual - arm);
+
+
         if (intake && robot.bucket.hasFreight()) {
             intake = false;
             schedule(new SharedCommand(robot, 2, false, outtake, done));
         }
 
+        double auto = System.currentTimeMillis();
+        telemetry.addData("auto update time ", auto - manual);
+
 
         double curr = System.currentTimeMillis();
-        telemetry.addData("loop time", curr - loop);
+        telemetry.addData("total loop time", curr - loop);
 
 //        telemetry.addData("imu ", imu.toString());
 //        telemetry.addData("left ", left_position);

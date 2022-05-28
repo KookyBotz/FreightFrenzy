@@ -29,6 +29,8 @@ public class Arm extends SubsystemBase {
 
     private final PIDController controller;
     private ElapsedTime time;
+    private ElapsedTime voltageTimer;
+    private double voltage;
 
     private MotionProfile profile;
     public static double max_v = 10000;
@@ -46,6 +48,8 @@ public class Arm extends SubsystemBase {
         controller.setPID(p, 0, d);
         this.batteryVoltageSensor = b;
         time = new ElapsedTime();
+        voltageTimer = new ElapsedTime();
+        voltage = batteryVoltageSensor.getVoltage();
     }
 
     public void loop() {
@@ -55,13 +59,18 @@ public class Arm extends SubsystemBase {
             previous_target = target;
         }
 
+        if(voltageTimer.seconds() > 5){
+            voltage = batteryVoltageSensor.getVoltage();
+            voltageTimer.reset();
+        }
+
         int armpos = arm.getCurrentPosition();
         MotionState targetState = profile == null ? new MotionState(0, 0) : profile.get(time.seconds());
         double target = targetState.getX();
         double pid = controller.calculate(armpos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_to_degrees)) * kcos;
 
-        double power = (pid + ff) * batteryVoltageSensor.getVoltage() / 12.0;
+        double power = (pid + ff) * voltage / 12.0;
 
         arm.setPower(power);
     }
