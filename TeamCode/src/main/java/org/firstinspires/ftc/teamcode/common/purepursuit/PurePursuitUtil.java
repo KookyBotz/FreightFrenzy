@@ -13,9 +13,9 @@ public class PurePursuitUtil {
     public static double default_power = 0.2;
     public static double max_acceleration = 40;
 
-    public static Pose P_coefficients = new Pose(24, 0, Math.PI);
+    public static Pose P_coefficients = new Pose(24, 0, Math.PI/1.5);
 
-    public static double admissible_error = 1;
+    public static double admissible_error = 3;
 
     public static Point lineCircleIntersection(Point pointA, Point pointB, Point center, double radius) {
         double baX = pointB.x - pointA.x;

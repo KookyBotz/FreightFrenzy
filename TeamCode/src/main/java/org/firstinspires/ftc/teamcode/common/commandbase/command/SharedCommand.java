@@ -14,9 +14,9 @@ import java.util.function.Consumer;
 public class SharedCommand extends SequentialCommandGroup {
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake) {
         super(
+                new InstantCommand(() -> robot.bucket.close()),
                 new WaitCommand(50),
                 new InstantCommand(robot.intake::reverse),
-                new InstantCommand(() -> robot.bucket.close()),
                 new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new WaitUntilCommand(() -> robot.arm.pos() > 50),
@@ -43,9 +43,9 @@ public class SharedCommand extends SequentialCommandGroup {
 
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake, Consumer<Boolean> done) {
         super(
+                new InstantCommand(() -> robot.bucket.close()),
                 new WaitCommand(50),
                 new InstantCommand(robot.intake::reverse),
-                new InstantCommand(() -> robot.bucket.close()),
                 new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new WaitUntilCommand(() -> robot.arm.pos() > 50),
