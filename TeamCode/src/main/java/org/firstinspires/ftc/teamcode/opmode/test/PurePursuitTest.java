@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
@@ -28,6 +29,8 @@ public class PurePursuitTest extends OpMode {
 
     List<Waypoint> waypoints;
 
+    private double loop = 0;
+
     @Override
     public void init() {
         robot = new Robot(hardwareMap);
@@ -38,12 +41,17 @@ public class PurePursuitTest extends OpMode {
         waypoints.add(new Waypoint(0, 0, 0));
         waypoints.add(new Waypoint(20, 0, 8.5));
         waypoints.add(new Waypoint(36, 18, 8.5));
-        waypoints.add(new Waypoint(20, 0, 8.5));
-        waypoints.add(new Waypoint(0, 0, 8.5));
+        waypoints.add(new Waypoint(20, 0, 8.5, true));
+        waypoints.add(new Waypoint(0, 0, 8.5, true));
+
+
     }
 
     @Override
     public void loop() {
+        double time = System.currentTimeMillis();
+        telemetry.addData("loop time ", time - loop);
+        loop = time;
 
         Rotation2d imu = new Rotation2d(-robot.imu.getAngularOrientation().firstAngle);
         double right_position = robot.right_encoder.getPosition() / 383.6 * 11.873736;
@@ -69,8 +77,11 @@ public class PurePursuitTest extends OpMode {
 
             double angle = AngleUnit.normalizeRadians(target.subtract(robot).atan());
 
-
             angle = AngleUnit.normalizeRadians(angle - Math.toRadians(robot.angle));
+
+            if (b.reversed) {
+                angle = AngleUnit.normalizeRadians(angle + Math.PI);
+            }
 
             telemetry.addData("angle error ", Math.toDegrees(angle));
 
@@ -82,6 +93,9 @@ public class PurePursuitTest extends OpMode {
             double forward_power = robot.distanceTo(target) / PurePursuitUtil.P_coefficients.x;
             forward_power = Math.max(-1, Math.min(1, forward_power));
 
+            if (b.reversed) {
+                forward_power *= -1;
+            }
 
             double heading_scale = Math.abs(Math.cos(Math.min(Math.max(-Math.PI / 2, angle), Math.PI / 2)));
 
