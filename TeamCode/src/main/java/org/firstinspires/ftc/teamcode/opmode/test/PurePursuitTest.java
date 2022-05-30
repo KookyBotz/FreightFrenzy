@@ -8,11 +8,13 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdome
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.purepursuit.PurePursuitUtil;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Point;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Waypoint;
+import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +37,9 @@ public class PurePursuitTest extends OpMode {
         waypoints = new ArrayList<>();
         waypoints.add(new Waypoint(0, 0, 0));
         waypoints.add(new Waypoint(20, 0, 8.5));
-        waypoints.add(new Waypoint(20, 36, 8.5));
-
-
+        waypoints.add(new Waypoint(36, 18, 8.5));
+        waypoints.add(new Waypoint(20, 0, 8.5));
+        waypoints.add(new Waypoint(0, 0, 8.5));
     }
 
     @Override
@@ -65,19 +67,31 @@ public class PurePursuitTest extends OpMode {
         } else {
             Point target = PurePursuitUtil.lineCircleIntersection(a, b, robot, radius);
 
-            double x = PurePursuitUtil.getX(robot, target);
-            double curvature = PurePursuitUtil.getCurvature(x, radius);
-            double sign = PurePursuitUtil.getSign(robot, target);
-
-            List<Double> powers = PurePursuitUtil.calculateWheelSpeeds(robot, target, curvature, sign, 0.2, 8.3);
+            double angle = AngleUnit.normalizeRadians(target.subtract(robot).atan());
 
 
-            telemetry.addData("tan", Math.tan(Math.toRadians(robot.angle)));
-            telemetry.addData("x ", x);
-            telemetry.addData("c ", curvature);
-            telemetry.addData("signed ", sign);
-            telemetry.addData("p ", powers.toString());
-            this.robot.drive.tankDrive(powers.get(1), powers.get(0));
+            angle = AngleUnit.normalizeRadians(angle - Math.toRadians(robot.angle));
+
+            telemetry.addData("angle error ", Math.toDegrees(angle));
+
+            double angle_power = angle / PurePursuitUtil.P_coefficients.angle;
+            angle_power = Math.max(-1, Math.min(1, angle_power));
+
+            telemetry.addData("angle power", angle_power);
+
+            double forward_power = robot.distanceTo(target) / PurePursuitUtil.P_coefficients.x;
+            forward_power = Math.max(-1, Math.min(1, forward_power));
+
+
+            double heading_scale = Math.abs(Math.cos(Math.min(Math.max(-Math.PI / 2, angle), Math.PI / 2)));
+
+            telemetry.addData("heading scale ", heading_scale);
+
+            ArrayList<Double> powers = new ArrayList<>();
+            powers.add(forward_power * heading_scale + angle_power);
+            powers.add(forward_power * heading_scale - angle_power);
+
+            this.robot.drive.tankDrive(powers.get(0), powers.get(1));
 
             Point heading_line = new Point(robot.x, robot.y).rotated(Math.toRadians(-robot.angle)).add(new Point(10, 0)).rotated(Math.toRadians(robot.angle));
 

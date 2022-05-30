@@ -9,9 +9,11 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.SharedCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
+import java.util.Locale;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -91,6 +93,19 @@ public class teleop extends CommandOpMode {
 //        telemetry.addLine(currentRobotPose.toString());
 //        telemetry.addData("arm ", robot.arm.pos());
 //        telemetry.addData("has freight ", robot.bucket.hasFreight());
+
+        telemetry.addLine(String.format(Locale.ENGLISH, "left: %.2f, %.2f, %.2f right: %.2f, %.2f, %.2f intake: %.2f arm: %.2f",
+                robot.left_back.motorEx.getCurrent(CurrentUnit.AMPS),
+                robot.left_middle.motorEx.getCurrent(CurrentUnit.AMPS),
+                robot.left_front.motorEx.getCurrent(CurrentUnit.AMPS),
+
+                robot.right_back.motorEx.getCurrent(CurrentUnit.AMPS),
+                robot.right_middle.motorEx.getCurrent(CurrentUnit.AMPS),
+                robot.right_front.motorEx.getCurrent(CurrentUnit.AMPS),
+
+                robot.i.motorEx.getCurrent(CurrentUnit.AMPS),
+                robot.a.getCurrent(CurrentUnit.AMPS)
+        ));
         telemetry.update();
 
         loop = System.currentTimeMillis();

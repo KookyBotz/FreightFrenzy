@@ -15,7 +15,7 @@ public class SharedCommand extends SequentialCommandGroup {
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake) {
         super(
                 new WaitCommand(50),
-                //new InstantCommand(robot.intake::reverse),
+                new InstantCommand(robot.intake::reverse),
                 new InstantCommand(() -> robot.bucket.close()),
                 new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
@@ -34,10 +34,9 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.arm.linkageIn()),
                 new WaitCommand(100),
                 new InstantCommand(() -> robot.arm.armIn()),
-                new WaitUntilCommand(() -> robot.arm.pos() < 200),
+                new WaitUntilCommand(() -> robot.arm.pos() < 250),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
-                new InstantCommand(() -> robot.bucket.in()),
                 new InstantCommand(() -> robot.intake.start())
         );
     }
@@ -45,7 +44,7 @@ public class SharedCommand extends SequentialCommandGroup {
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake, Consumer<Boolean> done) {
         super(
                 new WaitCommand(50),
-                //new InstantCommand(robot.intake::reverse),
+                new InstantCommand(robot.intake::reverse),
                 new InstantCommand(() -> robot.bucket.close()),
                 new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
@@ -64,7 +63,7 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.arm.linkageIn()),
                 new WaitCommand(100),
                 new InstantCommand(() -> robot.arm.armIn()),
-                new WaitUntilCommand(() -> robot.arm.pos() < 200),
+                new WaitUntilCommand(() -> robot.arm.pos() < 250),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
                 new InstantCommand(() -> robot.intake.start()),

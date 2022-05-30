@@ -25,6 +25,8 @@ public class Robot {
     public DifferentialDrive drive;
     public MotorGroup left;
     public MotorGroup right;
+    public MotorEx left_back, left_middle, left_front, right_back, right_middle, right_front, i;
+    public DcMotorEx a;
     public Motor.Encoder right_encoder;
     public Motor.Encoder left_encoder;
     public BNO055IMU imu;
@@ -39,9 +41,10 @@ public class Robot {
     public Intake intake;
 
     public Robot(HardwareMap hardwareMap) {
-        MotorEx left_back = new MotorEx(hardwareMap, "lb", Motor.GoBILDA.RPM_435);
-        MotorEx left_middle = new MotorEx(hardwareMap, "lm", Motor.GoBILDA.RPM_435);
-        MotorEx left_front = new MotorEx(hardwareMap, "lf", Motor.GoBILDA.RPM_435);
+        left_back = new MotorEx(hardwareMap, "lb", Motor.GoBILDA.RPM_435);
+        left_middle = new MotorEx(hardwareMap, "lm", Motor.GoBILDA.RPM_435);
+        left_front = new MotorEx(hardwareMap, "lf", Motor.GoBILDA.RPM_435);
+
 
         left_back.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         left_middle.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -51,9 +54,9 @@ public class Robot {
 
         left = new MotorGroup(left_back, left_middle, left_front);
 
-        MotorEx right_back = new MotorEx(hardwareMap, "rb", Motor.GoBILDA.RPM_435);
-        MotorEx right_middle = new MotorEx(hardwareMap, "rm", Motor.GoBILDA.RPM_435);
-        MotorEx right_front = new MotorEx(hardwareMap, "rf", Motor.GoBILDA.RPM_435);
+        right_back = new MotorEx(hardwareMap, "rb", Motor.GoBILDA.RPM_435);
+        right_middle = new MotorEx(hardwareMap, "rm", Motor.GoBILDA.RPM_435);
+        right_front = new MotorEx(hardwareMap, "rf", Motor.GoBILDA.RPM_435);
 
         right_back.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         right_middle.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -85,14 +88,14 @@ public class Robot {
 
         turret = new Turret(left, right);
 
-        DcMotorEx a = hardwareMap.get(DcMotorEx.class, "arm");
+        a = hardwareMap.get(DcMotorEx.class, "arm");
         a.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Servo l = hardwareMap.get(Servo.class, "linkage");
 
         arm = new Arm(a, l, batteryVoltageSensor);
 
-        MotorEx i = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
+        i = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
         i.motorEx.setDirection(DcMotorSimple.Direction.REVERSE);
         intake = new Intake(i);
 

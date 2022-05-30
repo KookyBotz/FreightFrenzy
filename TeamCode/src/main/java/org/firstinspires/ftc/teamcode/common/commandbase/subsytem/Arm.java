@@ -36,8 +36,8 @@ public class Arm extends SubsystemBase {
     public static double max_v = 10000;
     public static double max_a = 8000;
 
-    private int target = 12;
-    private int previous_target = 12;
+    private int target = 5;
+    private int previous_target = 5;
 
 
     public Arm(DcMotorEx a, Servo l, VoltageSensor b) {
@@ -76,11 +76,11 @@ public class Arm extends SubsystemBase {
     }
 
     public void armIn() {
-        target = 12;
+        target = 5;
     }
 
     public void armShared() {
-        target = 700;
+        target = 710;
     }
 
     public void linkageIn() {

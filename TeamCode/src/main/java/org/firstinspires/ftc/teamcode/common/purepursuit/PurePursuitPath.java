@@ -63,17 +63,20 @@ public class PurePursuitPath {
 
         Point target = PurePursuitUtil.lineCircleIntersection(a, b, robot, radius);
 
-        double angle = Math.toDegrees(target.subtract(robot).atan());
+        double angle = Math.toDegrees(target.subtract(robot).atan()) - robot.angle;
         //double reverse_angle = Math.toDegrees(Math.toRadians(angle + 180));
         //double auto_angle = Math.abs(robot.angle - angle) <
         //        Math.abs(robot.angle - reverse_angle) ?
         //        angle : reverse_angle;
 
         double angle_power = angle / PurePursuitUtil.P_coefficients.angle;
+        double forward_power = robot.distanceTo(target) / PurePursuitUtil.P_coefficients.x;
+
+        double heading_scale = Math.abs(Math.cos(Math.min(Math.max(-Math.PI / 2, angle - robot.angle), Math.PI / 2)));
 
         ArrayList<Double> powers = new ArrayList<>();
-        powers.add(PurePursuitUtil.default_power + angle_power);
-        powers.add(PurePursuitUtil.default_power - angle_power);
+        powers.add(forward_power * heading_scale + angle_power);
+        powers.add(forward_power * heading_scale - angle_power);
 
         return powers;
     }

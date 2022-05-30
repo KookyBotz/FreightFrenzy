@@ -13,7 +13,7 @@ public class PurePursuitUtil {
     public static double default_power = 0.2;
     public static double max_acceleration = 40;
 
-    public static Pose P_coefficients = new Pose(12, 0, 90);
+    public static Pose P_coefficients = new Pose(24, 0, Math.PI);
 
     public static double admissible_error = 1;
 
@@ -65,17 +65,10 @@ public class PurePursuitUtil {
 
         double theta = Math.acos(1 - ((d * d) / (2 * arc_radius * arc_radius)));
 
-        System.out.println("theta: " + theta);
-        System.out.println("main arc length " + theta * arc_radius);
-
         double left_radius = arc_radius + track_width / 2;
         double right_radius = arc_radius - track_width / 2;
         double left_arc = left_radius * theta;
         double right_arc = right_radius * theta;
-
-        System.out.println(left_arc);
-        System.out.println(right_arc);
-
         double max = Math.max(Math.abs(left_arc), Math.abs(right_arc));
 
         left_arc /= max;
@@ -92,7 +85,6 @@ public class PurePursuitUtil {
             powers.add(right_arc);
             powers.add(left_arc);
         }
-
 
         return powers;
     }
