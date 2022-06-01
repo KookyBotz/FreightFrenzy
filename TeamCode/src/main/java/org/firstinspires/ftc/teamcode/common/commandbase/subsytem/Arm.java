@@ -20,7 +20,9 @@ public class Arm extends SubsystemBase {
     private final VoltageSensor batteryVoltageSensor;
 
     public static double linkage_in = 0.93;
-    public static double linkage_out = 0.5;
+
+    //     public static double linkage_out = 0.5;
+    public static double linkage_out = 0.55;
 
     private final double p = 0.01;
     private final double d = 0.0005;
@@ -80,7 +82,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void armShared() {
-        target = 710;
+        target = 690;
     }
 
     public void linkageIn() {

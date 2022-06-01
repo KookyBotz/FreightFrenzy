@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 public class SharedCommand extends SequentialCommandGroup {
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake) {
         super(
+                new WaitCommand(50),
                 new InstantCommand(() -> robot.bucket.close()),
                 new WaitCommand(50),
                 new InstantCommand(robot.intake::reverse),
@@ -26,23 +27,25 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.arm.linkage(extend)),
                 new WaitUntilCommand(() -> robot.arm.pos() > 650),
                 new WaitUntilCommand(outtake),
-                new InstantCommand(() -> robot.bucket.dump()),
                 new InstantCommand(() -> robot.bucket.open()),
-                new WaitCommand(250),
+                new InstantCommand(() -> robot.bucket.dump()),
+                new WaitCommand(150),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.turret.middle()),
                 new InstantCommand(() -> robot.arm.linkageIn()),
                 new WaitCommand(100),
                 new InstantCommand(() -> robot.arm.armIn()),
-                new WaitUntilCommand(() -> robot.arm.pos() < 350),
+                new WaitUntilCommand(() -> robot.arm.pos() < 300),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
+                new WaitCommand(25),
                 new InstantCommand(() -> robot.intake.start())
         );
     }
 
     public SharedCommand(Robot robot, int turret, boolean extend, BooleanSupplier outtake, Consumer<Boolean> done) {
         super(
+                new WaitCommand(50),
                 new InstantCommand(() -> robot.bucket.close()),
                 new WaitCommand(50),
                 new InstantCommand(robot.intake::reverse),
@@ -55,17 +58,18 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.arm.linkage(extend)),
                 new WaitUntilCommand(() -> robot.arm.pos() > 650),
                 new WaitUntilCommand(outtake),
-                new InstantCommand(() -> robot.bucket.dump()),
                 new InstantCommand(() -> robot.bucket.open()),
-                new WaitCommand(250),
+                new InstantCommand(() -> robot.bucket.dump()),
+                new WaitCommand(150),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.turret.middle()),
                 new InstantCommand(() -> robot.arm.linkageIn()),
                 new WaitCommand(100),
                 new InstantCommand(() -> robot.arm.armIn()),
-                new WaitUntilCommand(() -> robot.arm.pos() < 350),
+                new WaitUntilCommand(() -> robot.arm.pos() < 300),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
+                new WaitCommand(25),
                 new InstantCommand(() -> robot.intake.start()),
                 new InstantCommand(() -> done.accept(true))
         );
