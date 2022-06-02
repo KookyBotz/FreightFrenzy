@@ -15,10 +15,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Arm;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Bucket;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Intake;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Turret;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvWebcam;
 import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
 public class Robot {
@@ -39,6 +42,9 @@ public class Robot {
     public Bucket bucket;
 
     public Intake intake;
+
+    public final OpenCvWebcam webcam;
+
 
     public Robot(HardwareMap hardwareMap) {
         left_back = new MotorEx(hardwareMap, "lb", Motor.GoBILDA.RPM_435);
@@ -111,5 +117,8 @@ public class Robot {
         for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 }

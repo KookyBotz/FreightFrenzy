@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.function.DoubleSupplier;
+
 @Config
 public class Arm extends SubsystemBase {
     public final DcMotorEx arm;
@@ -21,8 +23,7 @@ public class Arm extends SubsystemBase {
 
     public static double linkage_in = 0.93;
 
-    //     public static double linkage_out = 0.5;
-    public static double linkage_out = 0.55;
+    public static double linkage_out = 0.5;
 
     private final double p = 0.01;
     private final double d = 0.0005;
@@ -36,7 +37,7 @@ public class Arm extends SubsystemBase {
 
     private MotionProfile profile;
     public static double max_v = 10000;
-    public static double max_a = 8000;
+    public static double max_a = 10000;
 
     private int target = 5;
     private int previous_target = 5;
@@ -61,7 +62,7 @@ public class Arm extends SubsystemBase {
             previous_target = target;
         }
 
-        if(voltageTimer.seconds() > 5){
+        if (voltageTimer.seconds() > 5) {
             voltage = batteryVoltageSensor.getVoltage();
             voltageTimer.reset();
         }
@@ -82,26 +83,18 @@ public class Arm extends SubsystemBase {
     }
 
     public void armShared() {
-        target = 690;
+        target = 710;
     }
 
     public void linkageIn() {
         linkage.setPosition(linkage_in);
     }
 
-    public void linkageOut() {
-        linkage.setPosition(linkage_out);
-    }
-
     public int pos() {
         return arm.getCurrentPosition();
     }
 
-    public void linkage(boolean extend) {
-        if (extend) {
-            linkageOut();
-            return;
-        }
-        linkageIn();
+    public void linkage(DoubleSupplier percentage) {
+        linkage.setPosition(linkage_in + (linkage_out - linkage_in) * percentage.getAsDouble());
     }
 }

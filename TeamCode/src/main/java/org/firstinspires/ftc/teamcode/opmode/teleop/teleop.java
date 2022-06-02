@@ -12,26 +12,31 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.SharedCommand;
+import org.firstinspires.ftc.teamcode.common.ff.Alliance;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 import java.util.Locale;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 
 @TeleOp
 public class teleop extends CommandOpMode {
     private Robot robot;
     private BooleanSupplier outtake;
     private Consumer<Boolean> done;
+    private DoubleSupplier linkage;
     private boolean intake = true;
     private boolean extend;
     private double loop = 0;
+    public Alliance alliance = Alliance.BLUE;
 
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
         outtake = () -> gamepad1.right_bumper;
         done = (a) -> intake = a;
+        linkage = () -> gamepad1.right_trigger;
 
         robot.turret.middle();
         robot.arm.linkageIn();
@@ -43,7 +48,10 @@ public class teleop extends CommandOpMode {
     public void run() {
         super.run();
 
-        robot.drive.arcadeDrive(-gamepad1.left_stick_y, scale(gamepad1.right_stick_x, 0.6));
+        robot.drive.arcadeDrive(
+                -gamepad1.left_stick_y,
+                scale(gamepad1.right_stick_x, 0.6)
+        );
 
 
         robot.arm.loop();
@@ -51,14 +59,14 @@ public class teleop extends CommandOpMode {
 
         boolean a = gamepad1.a;
         if (a && !extend) {
-            schedule(new SharedCommand(robot, 2, false, outtake));
+            schedule(new SharedCommand(robot, alliance, outtake, done));
         }
         extend = a;
 
 
         if (intake && robot.bucket.hasFreight()) {
             intake = false;
-            schedule(new SharedCommand(robot, 2, gamepad1.left_bumper, outtake, done));
+            schedule(new SharedCommand(robot, alliance, outtake, linkage, done));
         }
 
 

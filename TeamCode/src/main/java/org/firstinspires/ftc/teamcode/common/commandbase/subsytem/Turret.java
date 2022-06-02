@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.common.ff.Alliance;
+
 @Config
 public class Turret extends SubsystemBase {
     private final Servo left;
@@ -35,10 +37,8 @@ public class Turret extends SubsystemBase {
         right.setPosition(right_middle - offset);
     }
 
-    public void turn(int pos) {
-        if (pos == 0) {
-            middle();
-        } else if (pos == 1) {
+    public void shared(Alliance alliance) {
+        if (alliance == Alliance.RED) {
             right();
         } else {
             left();

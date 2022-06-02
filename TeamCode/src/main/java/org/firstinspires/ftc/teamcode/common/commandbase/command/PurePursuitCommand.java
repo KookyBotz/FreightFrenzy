@@ -22,10 +22,20 @@ public class PurePursuitCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        path.init();
+    }
+
+    @Override
     public void execute() {
         List<Double> powers = path.update(new Pose(odometry.getPoseMeters()));
 
         drive.tankDrive(powers.get(0), powers.get(1));
+    }
+
+    @Override
+    public void end(boolean interrupted){
+        drive.tankDrive(0, 0);
     }
 
     @Override

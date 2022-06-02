@@ -13,7 +13,7 @@ public class PurePursuitUtil {
     public static double default_power = 0.2;
     public static double max_acceleration = 40;
 
-    public static Pose P_coefficients = new Pose(24, 0, Math.PI/1.5);
+    public static Pose P_coefficients = new Pose(24, 0, Math.PI);
 
     public static double admissible_error = 3;
 
