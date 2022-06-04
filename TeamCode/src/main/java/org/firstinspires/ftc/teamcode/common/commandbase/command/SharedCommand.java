@@ -20,7 +20,9 @@ public class SharedCommand extends SequentialCommandGroup {
     public SharedCommand(Robot robot, Alliance alliance, BooleanSupplier outtake, DoubleSupplier linkage, Consumer<Boolean> done) {
         super(
                 new InstantCommand(() -> robot.bucket.close()),
+                new InstantCommand(() -> robot.bucket.in()),
                 new WaitCommand(50),
+                new InstantCommand(() -> robot.intake.reverse()),
                 new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new WaitUntilCommand(() -> robot.arm.pos() > 50),
@@ -34,9 +36,9 @@ public class SharedCommand extends SequentialCommandGroup {
                         )
                 ),
                 new InstantCommand(() -> robot.bucket.open()),
-                new WaitCommand(50),
+                new WaitCommand(30),
                 new InstantCommand(() -> robot.bucket.dump()),
-                new WaitCommand(150),
+                new WaitCommand(200),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.turret.middle()),
                 new InstantCommand(() -> robot.arm.linkageIn()),
@@ -45,7 +47,7 @@ public class SharedCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(() -> robot.arm.pos() < 300),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
-                new WaitCommand(25),
+                new WaitCommand(50),
                 new InstantCommand(() -> robot.intake.start()),
                 new InstantCommand(() -> robot.bucket.pastIn()),
                 new InstantCommand(() -> done.accept(true))

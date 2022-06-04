@@ -32,7 +32,7 @@ public class Bucket extends SubsystemBase {
     }
 
     public void pastIn() {
-        dump.setPosition(in_position + 0.01);
+        dump.setPosition(in_position + 0.015);
     }
 
     public void rest() {

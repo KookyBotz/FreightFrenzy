@@ -36,8 +36,8 @@ public class Arm extends SubsystemBase {
     private double voltage;
 
     private MotionProfile profile;
-    public static double max_v = 10000;
-    public static double max_a = 10000;
+    public static double max_v = 8000;
+    public static double max_a = 8000;
 
     private int target = 5;
     private int previous_target = 5;
@@ -73,7 +73,7 @@ public class Arm extends SubsystemBase {
         double pid = controller.calculate(armpos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_to_degrees)) * kcos;
 
-        double power = (pid + ff) * voltage / 12.0;
+        double power = (pid + ff) / voltage * 12.0;
 
         arm.setPower(power);
     }

@@ -86,6 +86,8 @@ public class teleop extends CommandOpMode {
                 robot.i.motorEx.getCurrent(CurrentUnit.AMPS),
                 robot.a.getCurrent(CurrentUnit.AMPS)
         ));
+
+        telemetry.addData("intake ", robot.intake.intake.motorEx.getCurrentPosition());
         telemetry.update();
 
         loop = System.currentTimeMillis();

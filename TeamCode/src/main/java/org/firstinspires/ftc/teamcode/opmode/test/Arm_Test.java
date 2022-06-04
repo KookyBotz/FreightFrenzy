@@ -26,7 +26,7 @@ public class Arm_Test extends OpMode {
     public static double kcos = 0.2;
 
     public static double max_v = 8000;
-    public static double max_a = 10000;
+    public static double max_a = 8000;
 
     public static double p, i, d;
     private double pp, pi, pd;
@@ -68,7 +68,7 @@ public class Arm_Test extends OpMode {
         double pid = controller.calculate(arm, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * kcos;
 
-        double power = (pid + ff) * robot.batteryVoltageSensor.getVoltage() / 12.0;
+        double power = (pid + ff) / robot.batteryVoltageSensor.getVoltage() * 12.0;
 
         robot.arm.arm.setPower(power);
 
