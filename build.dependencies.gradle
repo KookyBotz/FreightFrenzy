@@ -23,6 +23,6 @@ dependencies {
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
-    implementation 'com.github.Eeshwar-Krishnan.PhotonFTC:NeutrinoI2C:v1.0.4'
+    implementation 'com.github.Eeshwar-Krishnan.PhotonFTC:NeutrinoI2C:v1.1.0'
 }
 

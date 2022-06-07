@@ -16,7 +16,7 @@ public class Subsystem_Tester extends CommandOpMode {
     private DifferentialDriveOdometry odometry;
     private GamepadEx gamepad;
 
-        private double time = 0;
+    private double time = 0;
 
     @Override
     public void initialize() {
@@ -30,7 +30,6 @@ public class Subsystem_Tester extends CommandOpMode {
         super.run();
 
 //        robot.drive.arcadeDrive(-gamepad1.left_stick_y, Math.pow(gamepad1.right_stick_x, 3));
-        robot.arm.loop();
 //
         Rotation2d imu = new Rotation2d(-robot.imu.getAngularOrientation().firstAngle);
         double right_position = robot.right_encoder.getPosition() / 383.6 * 0.30159289474462015089241376479483;
@@ -45,13 +44,13 @@ public class Subsystem_Tester extends CommandOpMode {
 
 //        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(()->robot.bucket.close());
 //        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(()->robot.bucket.open());
-        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(() -> robot.turret.middle());
+//        gamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(() -> robot.turret.middle());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> robot.turret.right());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> robot.turret.left());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(() -> robot.arm.armIn());
 //        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> robot.arm.armShared());
-//        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(() -> robot.arm.linkageIn());
-//        gamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(() -> robot.arm.linkageOut());
+        gamepad.getGamepadButton(GamepadKeys.Button.B).whenPressed(() -> robot.arm.linkageIn());
+        gamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(() -> robot.arm.linkage(()->1));
 //
 //        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(() -> robot.bucket.in());
 //        gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(() -> robot.bucket.dump());

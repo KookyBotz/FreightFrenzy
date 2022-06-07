@@ -25,7 +25,7 @@ public class teleop extends CommandOpMode {
     private Robot robot;
     private BooleanSupplier outtake;
     private Consumer<Boolean> done;
-    private DoubleSupplier linkage;
+    private DoubleSupplier linkage, arm;
     private boolean intake = true;
     private boolean extend;
     private double loop = 0;
@@ -37,6 +37,7 @@ public class teleop extends CommandOpMode {
         outtake = () -> gamepad1.right_bumper;
         done = (a) -> intake = a;
         linkage = () -> gamepad1.right_trigger;
+        arm = () -> gamepad1.left_trigger;
 
         robot.turret.middle();
         robot.arm.linkageIn();
@@ -53,20 +54,16 @@ public class teleop extends CommandOpMode {
                 scale(gamepad1.right_stick_x, 0.6)
         );
 
-
-        robot.arm.loop();
-
-
         boolean a = gamepad1.a;
         if (a && !extend) {
-            schedule(new SharedCommand(robot, alliance, outtake, done));
+            schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
         }
         extend = a;
 
 
         if (intake && robot.bucket.hasFreight()) {
             intake = false;
-            schedule(new SharedCommand(robot, alliance, outtake, linkage, done));
+            schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
         }
 
 
@@ -88,6 +85,8 @@ public class teleop extends CommandOpMode {
         ));
 
         telemetry.addData("intake ", robot.intake.intake.motorEx.getCurrentPosition());
+
+        telemetry.addData("linkage ", gamepad1.right_trigger);
         telemetry.update();
 
         loop = System.currentTimeMillis();

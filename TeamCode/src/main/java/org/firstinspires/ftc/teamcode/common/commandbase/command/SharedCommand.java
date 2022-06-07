@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 public class SharedCommand extends SequentialCommandGroup {
-    public SharedCommand(Robot robot, Alliance alliance, BooleanSupplier outtake, DoubleSupplier linkage, Consumer<Boolean> done) {
+    public SharedCommand(Robot robot, Alliance alliance, BooleanSupplier outtake, DoubleSupplier linkage, DoubleSupplier arm, Consumer<Boolean> done) {
         super(
                 new InstantCommand(() -> robot.bucket.close()),
                 new InstantCommand(() -> robot.bucket.in()),
@@ -33,6 +33,9 @@ public class SharedCommand extends SequentialCommandGroup {
                         new WaitUntilCommand(outtake),
                         new PerpetualCommand(
                                 new LinkageCommand(robot.arm, linkage)
+                        ),
+                        new PerpetualCommand(
+                                new ArmCommand(robot.arm, arm)
                         )
                 ),
                 new InstantCommand(() -> robot.bucket.open()),
@@ -52,9 +55,5 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.bucket.pastIn()),
                 new InstantCommand(() -> done.accept(true))
         );
-    }
-
-    public SharedCommand(Robot robot, Alliance alliance, BooleanSupplier outtake, Consumer<Boolean> done) {
-        this(robot, alliance, outtake, () -> 0, done);
     }
 }

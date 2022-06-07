@@ -9,9 +9,11 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdome
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.command.DrivetrainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.PurePursuitCommand;
 import org.firstinspires.ftc.teamcode.common.ff.BarcodePipeline;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Waypoint;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -21,6 +23,7 @@ public class BlueDuckAuto extends OpMode {
     private Robot robot;
     private DifferentialDriveOdometry odometry;
     private BarcodePipeline pipeline;
+    private BarcodePipeline.BarcodePosition analysis;
 
     @Override
     public void init() {
@@ -46,7 +49,8 @@ public class BlueDuckAuto extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         CommandScheduler.getInstance().schedule(
-                new PurePursuitCommand(robot.drive, odometry, new Waypoint(0, 0, 10), new Waypoint(-12, 0, 10, true))
+                new DrivetrainCommand(new Pose(-20, 0, 0), robot, odometry, telemetry)
+                //new DrivetrainCommand(new Pose(-20, 5, -40), robot, odometry, telemetry)
         );
     }
 
@@ -56,13 +60,13 @@ public class BlueDuckAuto extends OpMode {
     }
 
     public void start() {
+        analysis = pipeline.getAnalysis();
         robot.webcam.closeCameraDevice();
     }
 
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
-        robot.arm.loop();
 
         Rotation2d imu = new Rotation2d(-robot.imu.getAngularOrientation().firstAngle);
         double right_position = robot.right_encoder.getPosition() / 383.6 * 11.873743682;

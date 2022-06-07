@@ -55,7 +55,8 @@ public class Arm extends SubsystemBase {
         voltage = batteryVoltageSensor.getVoltage();
     }
 
-    public void loop() {
+    @Override
+    public void periodic() {
         if (target != previous_target) {
             profile = MotionProfileGenerator.generateSimpleMotionProfile(new MotionState(previous_target, 0), new MotionState(target, 0), max_v, max_a);
             time.reset();
@@ -96,5 +97,10 @@ public class Arm extends SubsystemBase {
 
     public void linkage(DoubleSupplier percentage) {
         linkage.setPosition(linkage_in + (linkage_out - linkage_in) * percentage.getAsDouble());
+        System.out.println("linkage: " + percentage.getAsDouble());
+    }
+
+    public void adjustArm(DoubleSupplier percentage){
+        target = target - (int)(30 * percentage.getAsDouble());
     }
 }
