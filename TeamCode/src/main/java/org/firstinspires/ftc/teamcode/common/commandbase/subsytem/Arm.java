@@ -43,6 +43,8 @@ public class Arm extends SubsystemBase {
     private int previous_target = 5;
 
 
+    private double cache = 0;
+
     public Arm(DcMotorEx a, Servo l, VoltageSensor b) {
         arm = a;
         linkage = l;
@@ -69,6 +71,7 @@ public class Arm extends SubsystemBase {
         }
 
         int armpos = arm.getCurrentPosition();
+        cache = armpos;
         MotionState targetState = profile == null ? new MotionState(0, 0) : profile.get(time.seconds());
         double target = targetState.getX();
         double pid = controller.calculate(armpos, target);
@@ -100,7 +103,11 @@ public class Arm extends SubsystemBase {
         System.out.println("linkage: " + percentage.getAsDouble());
     }
 
-    public void adjustArm(DoubleSupplier percentage){
-        target = target - (int)(30 * percentage.getAsDouble());
+    public void adjustArm(DoubleSupplier percentage) {
+        target = target - (int) (30 * percentage.getAsDouble());
+    }
+
+    public double getCachePos() {
+        return cache;
     }
 }

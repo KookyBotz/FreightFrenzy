@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common.commandbase.command;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,6 +20,10 @@ public class DrivetrainCommand extends CommandBase {
 
     private Telemetry telemetry;
 
+    private double stablems = 0;
+    private boolean atTarget = false;
+    private ElapsedTime stableTimer;
+
     public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry) {
         this.robot = robot;
         this.target = target;
@@ -27,6 +32,11 @@ public class DrivetrainCommand extends CommandBase {
 
         angleController = new PIDController(0.0065, 0, 0);
         distanceController = new PIDController(0.05, 0, 0);
+    }
+
+    public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry, double stablems) {
+        this(target, robot, odometry, telemetry);
+        this.stablems = stablems;
     }
 
     @Override
@@ -64,6 +74,7 @@ public class DrivetrainCommand extends CommandBase {
         f *= Math.cos(Math.max(Math.min(Math.toRadians(tError * 2), Math.PI / 2), -Math.PI / 2));
 
         f = Range.clip(f, -0.5, 0.5);
+        t = Range.clip(t, -0.5, 0.5);
 
         this.robot.drive.tankDrive((f + t) * voltageMultiplier, (f - t) * voltageMultiplier);
 
@@ -77,7 +88,16 @@ public class DrivetrainCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return robotPose.distanceTo(target) < 2 && Math.abs(AngleUnit.normalizeDegrees(target.angle - robotPose.angle)) < 2;
+        if (robotPose.distanceTo(target) < 2 && Math.abs(AngleUnit.normalizeDegrees(target.angle - robotPose.angle)) < 2 && stableTimer == null) {
+            atTarget = true;
+            stableTimer = new ElapsedTime();
+        }
+
+        if (atTarget && stableTimer.milliseconds() >= stablems) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

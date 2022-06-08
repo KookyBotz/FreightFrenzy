@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.ff;
 
-import com.acmerobotics.dashboard.config.Config;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -10,7 +8,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Config
 public class BarcodePipeline extends OpenCvPipeline {
     public enum BarcodePosition {
         LEFT,
