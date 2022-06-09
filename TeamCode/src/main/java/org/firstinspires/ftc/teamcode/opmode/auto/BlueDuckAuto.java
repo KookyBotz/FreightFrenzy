@@ -68,7 +68,8 @@ public class BlueDuckAuto extends OpMode {
                         new DrivetrainCommand(new Pose(-52, 5, -90), robot, odometry, telemetry, 1000),
                         new DrivetrainCommand(new Pose(-52, 20, -90), robot, odometry, telemetry, 2000),
                         new DrivetrainCommand(new Pose(-52, 44, 0), robot, odometry, telemetry, 1000),
-                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000)
+                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
+                        new DrivetrainCommand(new Pose(-27, 98, 0), robot, odometry, telemetry, 2000)
                 )
         );
 
