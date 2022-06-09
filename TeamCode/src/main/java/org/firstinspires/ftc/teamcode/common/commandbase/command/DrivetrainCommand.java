@@ -24,6 +24,8 @@ public class DrivetrainCommand extends CommandBase {
     private boolean atTarget = false;
     private ElapsedTime stableTimer;
 
+    private boolean jitterhack = false;
+
     public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry) {
         this.robot = robot;
         this.target = target;
@@ -53,7 +55,7 @@ public class DrivetrainCommand extends CommandBase {
 
         double f, t;
 
-        if (distance > 2) {
+        if (distance > 2 && !jitterhack) {
             if (Math.abs(tError) > 90) {
                 tError = AngleUnit.normalizeDegrees(tError + 180);
                 distance *= -1;
@@ -62,6 +64,7 @@ public class DrivetrainCommand extends CommandBase {
             f = distanceController.calculate(0, distance);
             t = angleController.calculate(0, tError);
         } else {
+            jitterhack = true;
             f = 0;
             t = 0;
             tError = AngleUnit.normalizeDegrees(target.angle - robotPose.angle);
@@ -71,7 +74,7 @@ public class DrivetrainCommand extends CommandBase {
             }
         }
 
-        f *= Math.cos(Math.max(Math.min(Math.toRadians(tError * 2), Math.PI / 2), -Math.PI / 2));
+        f *= Math.cos(Math.max(Math.min(Math.toRadians(tError * 3), Math.PI / 2), -Math.PI / 2));
 
         f = Range.clip(f, -0.5, 0.5);
         t = Range.clip(t, -0.5, 0.5);
@@ -88,7 +91,7 @@ public class DrivetrainCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (robotPose.distanceTo(target) < 2 && Math.abs(AngleUnit.normalizeDegrees(target.angle - robotPose.angle)) < 2 && stableTimer == null) {
+        if (jitterhack && Math.abs(AngleUnit.normalizeDegrees(target.angle - robotPose.angle)) < 2 && stableTimer == null) {
             atTarget = true;
             stableTimer = new ElapsedTime();
         }
