@@ -26,7 +26,7 @@ public class DuckPipeline2 extends OpenCvPipeline {
         public static int BORDER_LEFT_X = 0;   //amount of pixels from the left side of the cam to skip
         public static int BORDER_RIGHT_X = 0;   //amount of pixels from the right of the cam to skip
         public static int BORDER_TOP_Y = 0;   //amount of pixels from the top of the cam to skip
-        public static int BORDER_BOTTOM_Y = 130;   //amount of pixels from the bottom of the cam to skip
+        public static int BORDER_BOTTOM_Y = 0;   //amount of pixels from the bottom of the cam to skip
 
         //y is fot the outpiut
 

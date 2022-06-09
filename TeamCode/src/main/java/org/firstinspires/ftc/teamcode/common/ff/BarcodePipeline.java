@@ -101,7 +101,7 @@ public class BarcodePipeline extends OpenCvPipeline {
 
 
         if (min == avg1) {
-            position = BarcodePosition.LEFT;
+            position = BarcodePosition.RIGHT;
 
 
             Imgproc.rectangle(
@@ -121,7 +121,7 @@ public class BarcodePipeline extends OpenCvPipeline {
                     GREEN,
                     -1);
         } else {
-            position = BarcodePosition.RIGHT;
+            position = BarcodePosition.LEFT;
 
 
             Imgproc.rectangle(

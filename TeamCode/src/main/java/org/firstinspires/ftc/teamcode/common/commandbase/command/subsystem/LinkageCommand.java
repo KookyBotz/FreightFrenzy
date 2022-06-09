@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.commandbase.command;
+package org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -6,18 +6,18 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Arm;
 
 import java.util.function.DoubleSupplier;
 
-public class ArmCommand extends CommandBase {
+public class LinkageCommand extends CommandBase {
     private Arm arm;
     private DoubleSupplier supplier;
 
-    public ArmCommand(Arm arm, DoubleSupplier supplier) {
+    public LinkageCommand(Arm arm, DoubleSupplier supplier) {
         this.arm = arm;
         this.supplier = supplier;
     }
 
     @Override
     public void execute() {
-        arm.adjustArm(supplier);
+        arm.linkage(supplier);
     }
 
     @Override

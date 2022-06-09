@@ -43,7 +43,7 @@ public class Robot {
 
     public Intake intake;
 
-    public final OpenCvWebcam webcam;
+    public final OpenCvWebcam webcam, webcam2;
 
 
     public Robot(HardwareMap hardwareMap) {
@@ -120,5 +120,6 @@ public class Robot {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"));
     }
 }

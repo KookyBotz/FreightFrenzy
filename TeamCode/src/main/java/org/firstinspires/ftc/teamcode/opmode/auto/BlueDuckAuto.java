@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -12,17 +11,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.command.DrivetrainCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.command.DuckieBangBangCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.command.PurePursuitCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem.DrivetrainCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.DuckieJankCommand;
 import org.firstinspires.ftc.teamcode.common.ff.BarcodePipeline;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
-import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Waypoint;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.nio.file.DirectoryIteratorException;
 
 @Autonomous
 public class BlueDuckAuto extends OpMode {
@@ -31,6 +26,7 @@ public class BlueDuckAuto extends OpMode {
     private BarcodePipeline pipeline;
     private BarcodePipeline.BarcodePosition analysis;
     private double loop;
+
 
     @Override
     public void init() {
@@ -63,13 +59,15 @@ public class BlueDuckAuto extends OpMode {
                         new DrivetrainCommand(new Pose(-4, -20, -50), robot, odometry, telemetry, 750),
                         new WaitCommand(2000),
                         new DrivetrainCommand(new Pose(-20, -15, 0), robot, odometry, telemetry, 750),
-                        //                        new DuckieBangBangCommand(robot.webcam, robot),
-                        new DrivetrainCommand(new Pose(-5, -15, 0), robot, odometry, telemetry, 1000),
-                        new DrivetrainCommand(new Pose(-52, 5, -90), robot, odometry, telemetry, 1000),
-                        new DrivetrainCommand(new Pose(-52, 20, -90), robot, odometry, telemetry, 2000),
-                        new DrivetrainCommand(new Pose(-52, 44, 0), robot, odometry, telemetry, 1000),
-                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
-                        new DrivetrainCommand(new Pose(-27, 98, 0), robot, odometry, telemetry, 2000)
+                        new DuckieJankCommand(robot, odometry, telemetry, 2500,
+                                new SequentialCommandGroup(
+//                                        new DrivetrainCommand(new Pose(-52, 5, -90), robot, odometry, telemetry, 1000)
+//                                        new DrivetrainCommand(new Pose(-52, 20, -90), robot, odometry, telemetry, 2000),
+//                                        new DrivetrainCommand(new Pose(-52, 44, 0), robot, odometry, telemetry, 1000),
+//                                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
+//                                        new DrivetrainCommand(new Pose(-27, 98, 0), robot, odometry, telemetry, 2000)
+                                )
+                        )
                 )
         );
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.commandbase.command;
+package org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;

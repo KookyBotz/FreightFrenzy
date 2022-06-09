@@ -82,6 +82,10 @@ public class Arm extends SubsystemBase {
         arm.setPower(power);
     }
 
+    public void setPos(int pos) {
+        target = pos;
+    }
+
     public void armIn() {
         target = 5;
     }
