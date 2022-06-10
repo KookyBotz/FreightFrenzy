@@ -2,15 +2,21 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadDumpCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem.DrivetrainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.DuckieJankCommand;
 import org.firstinspires.ftc.teamcode.common.ff.BarcodePipeline;
@@ -31,7 +37,6 @@ public class BlueDuckAuto extends OpMode {
     @Override
     public void init() {
         robot = new Robot(hardwareMap);
-        robot.arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
 
         robot.webcam.setPipeline(pipeline = new BarcodePipeline());
@@ -52,24 +57,6 @@ public class BlueDuckAuto extends OpMode {
         FtcDashboard.getInstance().startCameraStream(robot.webcam, 30);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        CommandScheduler.getInstance().schedule(
-                new SequentialCommandGroup(
-                        new DrivetrainCommand(new Pose(-20, 5, -40), robot, odometry, telemetry),
-                        new WaitCommand(500),
-                        new DrivetrainCommand(new Pose(-4, -20, -50), robot, odometry, telemetry, 750),
-                        new WaitCommand(2000),
-                        new DrivetrainCommand(new Pose(-20, -15, 0), robot, odometry, telemetry, 750),
-                        new DuckieJankCommand(robot, odometry, telemetry, 2500,
-                                new SequentialCommandGroup(
-//                                        new DrivetrainCommand(new Pose(-52, 5, -90), robot, odometry, telemetry, 1000)
-//                                        new DrivetrainCommand(new Pose(-52, 20, -90), robot, odometry, telemetry, 2000),
-//                                        new DrivetrainCommand(new Pose(-52, 44, 0), robot, odometry, telemetry, 1000),
-//                                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
-//                                        new DrivetrainCommand(new Pose(-27, 98, 0), robot, odometry, telemetry, 2000)
-                                )
-                        )
-                )
-        );
 
         robot.turret.middle();
         robot.arm.linkageIn();
@@ -84,11 +71,32 @@ public class BlueDuckAuto extends OpMode {
 
     public void start() {
         analysis = pipeline.getAnalysis();
+
+        CommandScheduler.getInstance().schedule(
+                new SequentialCommandGroup(
+                        new PreloadExtendCommand(robot, analysis, odometry, telemetry),
+                        new PreloadDumpCommand(robot),
+                        new DrivetrainCommand(new Pose(-4, -20, -50), robot, odometry, telemetry, 750)
+                                .alongWith(new PreloadRetractCommand(robot)),
+                        new WaitCommand(2000),
+                        new DrivetrainCommand(new Pose(-20, -15, 0), robot, odometry, telemetry, 750),
+                        new DuckieJankCommand(robot, odometry, telemetry, 2500,
+                                new SequentialCommandGroup(
+//                                        new DrivetrainCommand(new Pose(-52, 5, -90), robot, odometry, telemetry, 1000)
+//                                        new DrivetrainCommand(new Pose(-52, 20, -90), robot, odometry, telemetry, 2000),
+//                                        new DrivetrainCommand(new Pose(-52, 44, 0), robot, odometry, telemetry, 1000),
+//                                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
+//                                        new DrivetrainCommand(new Pose(-27, 98, 0), robot, odometry, telemetry, 2000)
+                                )
+                        )
+                )
+        );
     }
 
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
+        robot.arm.loop();
 
         Rotation2d imu = new Rotation2d(-robot.imu.getAngularOrientation().firstAngle);
         double right_position = robot.right_encoder.getPosition() / 383.6 * 11.873743682;

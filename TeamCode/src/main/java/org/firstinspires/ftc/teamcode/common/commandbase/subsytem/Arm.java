@@ -57,8 +57,7 @@ public class Arm extends SubsystemBase {
         voltage = batteryVoltageSensor.getVoltage();
     }
 
-    @Override
-    public void periodic() {
+    public void loop() {
         if (target != previous_target) {
             profile = MotionProfileGenerator.generateSimpleMotionProfile(new MotionState(previous_target, 0), new MotionState(target, 0), max_v, max_a);
             time.reset();

@@ -48,6 +48,7 @@ public class teleop extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+        robot.arm.loop();
 
         robot.drive.arcadeDrive(
                 -gamepad1.left_stick_y,
