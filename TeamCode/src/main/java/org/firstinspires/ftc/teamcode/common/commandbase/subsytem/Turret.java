@@ -27,11 +27,13 @@ public class Turret extends SubsystemBase {
         right.setPosition(right_middle);
     }
 
+    //actually goes to the right
     public void left() {
         left.setPosition(left_middle + offset);
         right.setPosition(right_middle + offset);
     }
 
+    //actually goes to the left
     public void right() {
         left.setPosition(left_middle - offset);
         right.setPosition(right_middle - offset);

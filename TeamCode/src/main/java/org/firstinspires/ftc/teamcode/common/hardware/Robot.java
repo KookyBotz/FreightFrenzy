@@ -51,7 +51,6 @@ public class Robot {
         left_middle = new MotorEx(hardwareMap, "lm", Motor.GoBILDA.RPM_435);
         left_front = new MotorEx(hardwareMap, "lf", Motor.GoBILDA.RPM_435);
 
-
         left_back.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         left_middle.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         left_front.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -103,6 +102,7 @@ public class Robot {
 
         i = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
         i.motorEx.setDirection(DcMotorSimple.Direction.REVERSE);
+        i.motorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake = new Intake(i);
 
         Servo d = hardwareMap.get(Servo.class, "dump");

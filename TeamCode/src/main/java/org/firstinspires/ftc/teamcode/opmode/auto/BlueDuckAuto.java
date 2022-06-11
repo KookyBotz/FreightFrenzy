@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.CycleDuckCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckArmExtend;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckArmRetract;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckCycleExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckCycleOuttakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadDumpCommand;
@@ -75,9 +77,7 @@ public class BlueDuckAuto extends OpMode {
 
     public void start() {
         analysis = pipeline.getAnalysis();
-        robot.webcam.closeCameraDeviceAsync(()-> System.out.println("closed 1"));
-
-
+        robot.webcam.closeCameraDeviceAsync(() -> System.out.println("closed 1"));
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
@@ -85,15 +85,15 @@ public class BlueDuckAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new WaitCommand(500).andThen(new DrivetrainCommand(new Pose(-3, -20.5, -50), robot, odometry, telemetry, 750))
                                 .alongWith(new PreloadRetractCommand(robot)),
-                        new CycleDuckCommand(robot),
-                        new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750),
+                        new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
+                        new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
                         new DuckieJankCommand(robot, odometry, telemetry, 2500,
                                 new SequentialCommandGroup(
                                         new DrivetrainCommand(new Pose(-53, 5, -90), robot, odometry, telemetry, 1000).alongWith(new DuckCycleExtendCommand(robot, Alliance.BLUE)),
                                         new DrivetrainCommand(new Pose(-53, 17, -90), robot, odometry, telemetry, 1000).andThen(new DuckCycleOuttakeCommand(robot)),
                                         new DrivetrainCommand(new Pose(-53, 44, 0), robot, odometry, telemetry, 1000),
                                         new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
-                                        new DrivetrainCommand(new Pose(-27, 105, 0), robot, odometry, telemetry, 2000)
+                                        new DrivetrainCommand(new Pose(-27, 100, 0), robot, odometry, telemetry, 2000)
                                 )
                         )
                 )

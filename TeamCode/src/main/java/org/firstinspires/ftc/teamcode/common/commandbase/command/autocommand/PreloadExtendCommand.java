@@ -22,7 +22,7 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                             new InstantCommand(() -> robot.bucket.close()),
                             new InstantCommand(() -> robot.arm.setPos(770)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.2))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0.15))
                     )
             );
         } else if (analysis == BarcodePipeline.BarcodePosition.CENTER) {
