@@ -17,6 +17,7 @@ public class Bucket extends SubsystemBase {
     public static double in_position = 0.68;
     public static double rest_position = 0.6;
     public static double dump_position = 0.85;
+    public static double all_the_way = 0.99;
 
     public static double gate_closed = 0.45;
     public static double gate_open = 1;
@@ -54,4 +55,6 @@ public class Bucket extends SubsystemBase {
     public void dump() {
         dump.setPosition(dump_position);
     }
+
+    public void dump_further(){dump.setPosition(all_the_way);}
 }

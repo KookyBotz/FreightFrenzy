@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,7 +41,8 @@ public class DuckieJankCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        robot.webcam2.setPipeline(pipeline = new DuckPipeline2());        robot.webcam.setMillisecondsPermissionTimeout(2500);
+        robot.webcam2.setPipeline(pipeline = new DuckPipeline2());
+        robot.webcam2.setMillisecondsPermissionTimeout(2500);
         robot.webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -52,7 +54,6 @@ public class DuckieJankCommand extends CommandBase {
 
             }
         });
-
 
 
         FtcDashboard.getInstance().stopCameraStream();
@@ -68,8 +69,9 @@ public class DuckieJankCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         double pos = pipeline.getDuckie();
+        robot.webcam2.closeCameraDeviceAsync(()-> System.out.println("closed 2"));
 
-        double inches = (pos - 160) / pixels_to_inches;
+        double inches = (pos - 155) / pixels_to_inches;
 
         if (pos == 0) {
             inches = 0;
@@ -79,7 +81,8 @@ public class DuckieJankCommand extends CommandBase {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new DrivetrainCommand(new Pose(-3, -15 + inches, 0), robot, odometry, telemetry, 1000),
+                        new InstantCommand(() -> robot.intake.start()),
+                        new DrivetrainCommand(new Pose(-1.5, -15 + inches, 0), robot, odometry, telemetry, 1000),
                         after
                 )
         );

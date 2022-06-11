@@ -14,11 +14,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.CycleDuckCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckCycleExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckCycleOuttakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadDumpCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem.DrivetrainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.DuckieJankCommand;
+import org.firstinspires.ftc.teamcode.common.ff.Alliance;
 import org.firstinspires.ftc.teamcode.common.ff.BarcodePipeline;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
@@ -71,22 +75,25 @@ public class BlueDuckAuto extends OpMode {
 
     public void start() {
         analysis = pipeline.getAnalysis();
+        robot.webcam.closeCameraDeviceAsync(()-> System.out.println("closed 1"));
+
+
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new PreloadExtendCommand(robot, analysis, odometry, telemetry),
                         new PreloadDumpCommand(robot),
-                        new DrivetrainCommand(new Pose(-4, -20, -50), robot, odometry, telemetry, 750)
+                        new WaitCommand(500).andThen(new DrivetrainCommand(new Pose(-3, -20.5, -50), robot, odometry, telemetry, 750))
                                 .alongWith(new PreloadRetractCommand(robot)),
-                        new WaitCommand(2000),
-                        new DrivetrainCommand(new Pose(-20, -15, 0), robot, odometry, telemetry, 750),
+                        new CycleDuckCommand(robot),
+                        new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750),
                         new DuckieJankCommand(robot, odometry, telemetry, 2500,
                                 new SequentialCommandGroup(
-//                                        new DrivetrainCommand(new Pose(-52, 5, -90), robot, odometry, telemetry, 1000)
-//                                        new DrivetrainCommand(new Pose(-52, 20, -90), robot, odometry, telemetry, 2000),
-//                                        new DrivetrainCommand(new Pose(-52, 44, 0), robot, odometry, telemetry, 1000),
-//                                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
-//                                        new DrivetrainCommand(new Pose(-27, 98, 0), robot, odometry, telemetry, 2000)
+                                        new DrivetrainCommand(new Pose(-53, 5, -90), robot, odometry, telemetry, 1000).alongWith(new DuckCycleExtendCommand(robot, Alliance.BLUE)),
+                                        new DrivetrainCommand(new Pose(-53, 17, -90), robot, odometry, telemetry, 1000).andThen(new DuckCycleOuttakeCommand(robot)),
+                                        new DrivetrainCommand(new Pose(-53, 44, 0), robot, odometry, telemetry, 1000),
+                                        new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
+                                        new DrivetrainCommand(new Pose(-27, 105, 0), robot, odometry, telemetry, 2000)
                                 )
                         )
                 )
@@ -118,7 +125,6 @@ public class BlueDuckAuto extends OpMode {
 
     @Override
     public void stop() {
-        robot.webcam.closeCameraDevice();
-
+        robot.webcam2.closeCameraDevice();
     }
 }
