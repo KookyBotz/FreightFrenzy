@@ -32,10 +32,8 @@ public class Intake extends SubsystemBase {
     }
 
     public void toggle() {
-        if (intake.get() == 0) {
+        if (intake.motorEx.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
             start();
-        } else if (intake.get() == 1) {
-            reverse();
         } else {
             stop();
         }

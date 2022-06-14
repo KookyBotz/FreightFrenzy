@@ -79,6 +79,9 @@ public class Arm extends SubsystemBase {
         double power = (pid + ff) / voltage * 12.0;
 
         arm.setPower(power);
+
+        //dont ask
+        linkage.setPosition(linkage.getPosition());
     }
 
     public void setPos(int pos) {
@@ -107,7 +110,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void adjustArm(DoubleSupplier percentage) {
-        target = target - (int) (30 * percentage.getAsDouble());
+        target = 710 + (int) (20 * percentage.getAsDouble());
     }
 
     public double getCachePos() {

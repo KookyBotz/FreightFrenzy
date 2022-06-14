@@ -6,9 +6,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.SharedCommand;
@@ -31,6 +33,11 @@ public class teleop extends CommandOpMode {
     private double loop = 0;
     public Alliance alliance = Alliance.BLUE;
 
+    private boolean intakeToggle = false;
+    private boolean flag = true;
+
+    private ElapsedTime timer;
+
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
@@ -47,12 +54,31 @@ public class teleop extends CommandOpMode {
 
     @Override
     public void run() {
+        if (timer == null) {
+            timer = new ElapsedTime();
+        }
+
+        if(timer.seconds() > 30 && timer.seconds() < 60 && flag){
+            gamepad1.rumble(500);
+            flag = false;
+        }
+
+        if (timer.seconds() > 60 && timer.seconds() < 90 && !flag) {
+            gamepad1.rumble(500);
+            flag = true;
+        }
+
+        if (timer.seconds() > 90 && flag) {
+            gamepad1.rumble(1000);
+            flag = false;
+        }
+
         super.run();
         robot.arm.loop();
 
         robot.drive.arcadeDrive(
-                -gamepad1.left_stick_y,
-                scale(gamepad1.right_stick_x, 0.6)
+                ether(-gamepad1.left_stick_y, 0.685, 0.06, 1),
+                ether(gamepad1.right_stick_x, 0.685, 0.06, 1)
         );
 
         boolean a = gamepad1.a;
@@ -67,6 +93,11 @@ public class teleop extends CommandOpMode {
             schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
         }
 
+        boolean x = gamepad1.x;
+        if (x && !intakeToggle) {
+            robot.intake.toggle();
+        }
+        intakeToggle = x;
 
         double time = System.currentTimeMillis();
         telemetry.addData("total loop time", time - loop);
@@ -97,4 +128,14 @@ public class teleop extends CommandOpMode {
         return (1 - k) * x + k * x * x * x;
     }
 
+    public double ether(double x, double p, double a_min, double a_max) {
+        double v = p * Math.pow(x, 3) + (1 - p) * x;
+        if (x > 0.001) {
+            return a_max * (a_min + (1 - a_min)) * v;
+        } else if (x < -0.001) {
+            return a_max * (-a_min + (1 - a_min)) * v;
+        } else {
+            return 0;
+        }
+    }
 }

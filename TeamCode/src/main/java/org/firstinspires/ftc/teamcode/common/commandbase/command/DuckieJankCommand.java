@@ -31,31 +31,17 @@ public class DuckieJankCommand extends CommandBase {
 
     private final SequentialCommandGroup after;
 
-    public DuckieJankCommand(Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry, double time, SequentialCommandGroup after) {
+    public DuckieJankCommand(Robot robot, DuckPipeline2 pipeline, DifferentialDriveOdometry odometry, Telemetry telemetry, double time, SequentialCommandGroup after) {
         this.robot = robot;
         this.time = time;
         this.after = after;
         this.odometry = odometry;
         this.telemetry = telemetry;
+        this.pipeline = pipeline;
     }
 
     @Override
     public void initialize() {
-        robot.webcam2.setPipeline(pipeline = new DuckPipeline2());
-        robot.webcam2.setMillisecondsPermissionTimeout(2500);
-        robot.webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                robot.webcam2.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-
-            }
-        });
-
-
         FtcDashboard.getInstance().stopCameraStream();
         FtcDashboard.getInstance().startCameraStream(robot.webcam2, 30);
         timer = new ElapsedTime();
@@ -71,7 +57,7 @@ public class DuckieJankCommand extends CommandBase {
         double pos = pipeline.getDuckie();
         robot.webcam2.closeCameraDeviceAsync(()-> System.out.println("closed 2"));
 
-        double inches = (pos - 155) / pixels_to_inches;
+        double inches = (pos - 150) / pixels_to_inches;
 
         if (pos == 0) {
             inches = 0;

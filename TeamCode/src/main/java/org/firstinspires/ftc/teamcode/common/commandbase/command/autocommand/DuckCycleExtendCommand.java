@@ -17,7 +17,7 @@ public class DuckCycleExtendCommand extends SequentialCommandGroup {
                     new InstantCommand(() -> robot.intake.stop()),
                     new InstantCommand(()->robot.bucket.close()),
                     new InstantCommand(()-> Arm.max_v = 3000),
-                    new InstantCommand(()->robot.arm.setPos(470)),
+                    new InstantCommand(()->robot.arm.setPos(550)),
                     new WaitUntilCommand(()->robot.arm.pos() > 350),
                     new InstantCommand(()->robot.arm.linkage(()->0.5)),
                     new InstantCommand(()->robot.turret.right())
@@ -28,7 +28,7 @@ public class DuckCycleExtendCommand extends SequentialCommandGroup {
                     new InstantCommand(() -> robot.intake.stop()),
                     new InstantCommand(()->robot.bucket.close()),
                     new InstantCommand(()-> Arm.max_v = 3000),
-                    new InstantCommand(()->robot.arm.setPos(470)),
+                    new InstantCommand(()->robot.arm.setPos(550 )),
                     new WaitUntilCommand(()->robot.arm.pos() > 350),
                     new InstantCommand(()->robot.arm.linkage(()->0.5)),
                     new InstantCommand(()->robot.turret.left())

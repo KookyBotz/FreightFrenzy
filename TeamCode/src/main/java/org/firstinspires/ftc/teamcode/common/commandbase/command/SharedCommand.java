@@ -30,6 +30,7 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.turret.shared(alliance)),
                 new InstantCommand(robot.intake::stop),
                 new WaitUntilCommand(() -> robot.arm.pos() > 650),
+                new InstantCommand(() -> robot.bucket.in()),
                 new ParallelDeadlineGroup(
                         new WaitUntilCommand(outtake),
                         new PerpetualCommand(
@@ -39,16 +40,16 @@ public class SharedCommand extends SequentialCommandGroup {
                                 new ArmCommand(robot.arm, arm)
                         )
                 ),
-                new InstantCommand(() -> robot.bucket.open()),
-                new WaitCommand(30),
                 new InstantCommand(() -> robot.bucket.dump()),
+                new WaitCommand(50),
+                new InstantCommand(() -> robot.bucket.open()),
                 new WaitCommand(200),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.turret.middle()),
                 new InstantCommand(() -> robot.arm.linkageIn()),
                 new WaitCommand(100),
                 new InstantCommand(() -> robot.arm.armIn()),
-                new WaitUntilCommand(() -> robot.arm.pos() < 300),
+                new WaitUntilCommand(() -> robot.arm.pos() < 150),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
                 new WaitCommand(50),

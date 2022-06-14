@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem.Drive
 import org.firstinspires.ftc.teamcode.common.commandbase.command.DuckieJankCommand;
 import org.firstinspires.ftc.teamcode.common.ff.Alliance;
 import org.firstinspires.ftc.teamcode.common.ff.BarcodePipeline;
+import org.firstinspires.ftc.teamcode.common.ff.DuckPipeline2;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -37,6 +38,8 @@ public class BlueDuckAuto extends OpMode {
     private DifferentialDriveOdometry odometry;
     private BarcodePipeline pipeline;
     private BarcodePipeline.BarcodePosition analysis;
+
+    private DuckPipeline2 pipeline2;
     private double loop;
 
 
@@ -79,6 +82,20 @@ public class BlueDuckAuto extends OpMode {
         analysis = pipeline.getAnalysis();
         robot.webcam.closeCameraDeviceAsync(() -> System.out.println("closed 1"));
 
+        robot.webcam2.setPipeline(pipeline2 = new DuckPipeline2());
+        robot.webcam2.setMillisecondsPermissionTimeout(2500);
+        robot.webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                robot.webcam2.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new PreloadExtendCommand(robot, analysis, odometry, telemetry),
@@ -87,9 +104,11 @@ public class BlueDuckAuto extends OpMode {
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
                         new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
-                        new DuckieJankCommand(robot, odometry, telemetry, 2500,
+                        new DuckieJankCommand(robot, pipeline2, odometry, telemetry, 1500,
                                 new SequentialCommandGroup(
-                                        new DrivetrainCommand(new Pose(-53, 5, -90), robot, odometry, telemetry, 1000).alongWith(new DuckCycleExtendCommand(robot, Alliance.BLUE)),
+                                        ((analysis == BarcodePipeline.BarcodePosition.RIGHT) ?
+                                                new DrivetrainCommand(new Pose(-53, -15, -90), robot, odometry, telemetry, 1000).alongWith(new DuckCycleExtendCommand(robot, Alliance.BLUE))
+                                                : new DrivetrainCommand(new Pose(-53, 5, -90), robot, odometry, telemetry, 1000).alongWith(new DuckCycleExtendCommand(robot, Alliance.BLUE))),
                                         new DrivetrainCommand(new Pose(-53, 17, -90), robot, odometry, telemetry, 1000).andThen(new DuckCycleOuttakeCommand(robot)),
                                         new DrivetrainCommand(new Pose(-53, 44, 0), robot, odometry, telemetry, 1000),
                                         new DrivetrainCommand(new Pose(-27, 46, 90), robot, odometry, telemetry, 2000),
