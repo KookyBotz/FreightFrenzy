@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 @TeleOp
 @Config
+
 public class GoTo_Test extends OpMode {
 
     private Robot robot;
@@ -35,8 +37,9 @@ public class GoTo_Test extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        p = 0.0065;
-        p2 = 0.05;
+        p = 0.005;
+        d = 0.001;
+        p2 = 0.061;
 
         angleController = new PIDController(p, i, d);
         distanceController = new PIDController(p2, i2, d2);

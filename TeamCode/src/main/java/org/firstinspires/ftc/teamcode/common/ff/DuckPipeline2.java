@@ -17,6 +17,7 @@ import java.util.List;
 
 
 import static org.firstinspires.ftc.teamcode.common.ff.DuckPipeline2.BarcodeConstants.*;
+
 public class DuckPipeline2 extends OpenCvPipeline {
     public static class BarcodeConstants {
         public static boolean DISPLAY = true;
@@ -25,7 +26,7 @@ public class DuckPipeline2 extends OpenCvPipeline {
         public static Scalar UPPER_LIMIT = new Scalar(255.0, 255.0, 255.0);
         public static int BORDER_LEFT_X = 0;   //amount of pixels from the left side of the cam to skip
         public static int BORDER_RIGHT_X = 0;   //amount of pixels from the right of the cam to skip
-        public static int BORDER_TOP_Y = 0;   //amount of pixels from the top of the cam to skip
+        public static int BORDER_TOP_Y = 80;   //amount of pixels from the top of the cam to skip
         public static int BORDER_BOTTOM_Y = 0;   //amount of pixels from the bottom of the cam to skip
 
         //y is fot the outpiut
@@ -52,17 +53,16 @@ public class DuckPipeline2 extends OpenCvPipeline {
 
     public Telemetry telemetry;
 
-    public DuckPipeline2(Telemetry t){
+    public DuckPipeline2(Telemetry t) {
         telemetry = t;
     }
-    public DuckPipeline2(){
+
+    public DuckPipeline2() {
     }
 
     @Override
-    public Mat processFrame(Mat input)
-    {
-        try
-        {
+    public Mat processFrame(Mat input) {
+        try {
             // Process Image
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(mat, processed, 2);
@@ -81,25 +81,22 @@ public class DuckPipeline2 extends OpenCvPipeline {
             Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             // Draw Contours
-            if(DISPLAY) Imgproc.drawContours(input, contours, -1, DISPLAY_COLOR);
+            if (DISPLAY) Imgproc.drawContours(input, contours, -1, DISPLAY_COLOR);
 
             // Loop Through Contours
-            for (MatOfPoint contour : contours)
-            {
+            for (MatOfPoint contour : contours) {
                 Point[] contourArray = contour.toArray();
 
                 // Bound Rectangle if Contour is Large Enough
-                if (contourArray.length >= 15)
-                {
+                if (contourArray.length >= 15) {
                     MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
                     Rect rect = Imgproc.boundingRect(areaPoints);
 
                     // if rectangle is larger than previous cycle or if rectangle is not larger than previous 6 cycles > then replace
-                    if (rect.area() > maxArea
+                    if ((rect.area() > maxArea || loopcounter - ploopcounter > 6)
                             && rect.x > BORDER_LEFT_X && rect.x + rect.width < input.width() - BORDER_RIGHT_X
                             && rect.y > BORDER_TOP_Y && rect.y + rect.height < input.height() - BORDER_BOTTOM_Y
-                            || loopcounter - ploopcounter > 6)
-                    {
+                    ) {
                         maxArea = rect.area();
                         maxRect = rect;
                         ploopcounter++;
@@ -112,29 +109,27 @@ public class DuckPipeline2 extends OpenCvPipeline {
             }
             mat.release();
             processed.release();
-            if (contours.isEmpty())
-            {
+            if (contours.isEmpty()) {
                 maxRect = new Rect();
             }
-            if (first && maxRect.area() > MIN_AREA)
-            {
-                if(DISPLAY) Imgproc.rectangle(input, maxRect, DISPLAY_COLOR, 2);
+            if (first && maxRect.area() > MIN_AREA) {
+                if (DISPLAY) Imgproc.rectangle(input, maxRect, DISPLAY_COLOR, 2);
             }
             // Draw Borders
-            if(DISPLAY) {
+            if (DISPLAY) {
                 Imgproc.rectangle(input, new Rect(BORDER_LEFT_X, BORDER_TOP_Y, input.width() - BORDER_RIGHT_X - BORDER_LEFT_X, input.height() - BORDER_BOTTOM_Y - BORDER_TOP_Y), DISPLAY_COLOR, 2);
 
                 // Display Data
 
-                Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y+ " Selection: "+getDuckie(), new Point(20, input.height() - 20), Imgproc.FONT_HERSHEY_PLAIN, 0.6, DISPLAY_COLOR, 1);
+                Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y + " Selection: " + getDuckie(), new Point(20, input.height() - 20), Imgproc.FONT_HERSHEY_PLAIN, 0.6, DISPLAY_COLOR, 1);
             }
             loopcounter++;
         } catch (Exception e) {
             debug = e;
             boolean error = true;
         }
-        if(telemetry != null){
-            telemetry.addLine(getDuckie()+"");
+        if (telemetry != null) {
+            telemetry.addLine(getDuckie() + "");
             telemetry.update();
         }
 
@@ -145,17 +140,41 @@ public class DuckPipeline2 extends OpenCvPipeline {
 
         return input;
     }
-    public int getRectHeight(){return maxRect.height;}
-    public int getRectWidth(){ return maxRect.width; }
-    public int getRectX(){ return maxRect.x; }
-    public int getRectY(){ return maxRect.y; }
-    public double getRectMidpointX(){ return getRectX() + (getRectWidth()/2.0); }
-    public double getRectMidpointY(){ return getRectY() + (getRectHeight()/2.0); }
-    public Point getRectMidpointXY(){ return new Point(getRectMidpointX(), getRectMidpointY());}
-    public double getRectArea(){ return maxRect.area(); }
 
-   public double getDuckie(){
-       System.out.println(getRectMidpointX());
+    public int getRectHeight() {
+        return maxRect.height;
+    }
+
+    public int getRectWidth() {
+        return maxRect.width;
+    }
+
+    public int getRectX() {
+        return maxRect.x;
+    }
+
+    public int getRectY() {
+        return maxRect.y;
+    }
+
+    public double getRectMidpointX() {
+        return getRectX() + (getRectWidth() / 2.0);
+    }
+
+    public double getRectMidpointY() {
+        return getRectY() + (getRectHeight() / 2.0);
+    }
+
+    public Point getRectMidpointXY() {
+        return new Point(getRectMidpointX(), getRectMidpointY());
+    }
+
+    public double getRectArea() {
+        return maxRect.area();
+    }
+
+    public double getDuckie() {
+        System.out.println(getRectMidpointX());
         return getRectMidpointX();
-   }
+    }
 }

@@ -6,11 +6,13 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.subsystem.DrivetrainCommand;
+import org.firstinspires.ftc.teamcode.common.ff.Alliance;
 import org.firstinspires.ftc.teamcode.common.ff.DuckPipeline2;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.purepursuit.geometry.Pose;
@@ -23,6 +25,7 @@ public class DuckieJankCommand extends CommandBase {
     private DifferentialDriveOdometry odometry;
     private Telemetry telemetry;
     private DuckPipeline2 pipeline;
+    private Alliance alliance;
 
     private final double time;
     private ElapsedTime timer;
@@ -31,13 +34,14 @@ public class DuckieJankCommand extends CommandBase {
 
     private final SequentialCommandGroup after;
 
-    public DuckieJankCommand(Robot robot, DuckPipeline2 pipeline, DifferentialDriveOdometry odometry, Telemetry telemetry, double time, SequentialCommandGroup after) {
+    public DuckieJankCommand(Robot robot, DuckPipeline2 pipeline, Alliance alliance, DifferentialDriveOdometry odometry, Telemetry telemetry, double time, SequentialCommandGroup after) {
         this.robot = robot;
         this.time = time;
         this.after = after;
         this.odometry = odometry;
         this.telemetry = telemetry;
         this.pipeline = pipeline;
+        this.alliance = alliance;
     }
 
     @Override
@@ -55,9 +59,9 @@ public class DuckieJankCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         double pos = pipeline.getDuckie();
-        robot.webcam2.closeCameraDeviceAsync(()-> System.out.println("closed 2"));
+        robot.webcam2.closeCameraDeviceAsync(() -> System.out.println("closed 2"));
 
-        double inches = (pos - 150) / pixels_to_inches;
+        double inches = (pos - 160) / pixels_to_inches;
 
         if (pos == 0) {
             inches = 0;
@@ -68,7 +72,9 @@ public class DuckieJankCommand extends CommandBase {
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new InstantCommand(() -> robot.intake.start()),
-                        new DrivetrainCommand(new Pose(-1.5, -15 + inches, 0), robot, odometry, telemetry, 1000),
+                        alliance == Alliance.BLUE ?
+                                new DrivetrainCommand(new Pose(-1, -15 + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
+                                new DrivetrainCommand(new Pose(-1, -(-15 + inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)),
                         after
                 )
         );

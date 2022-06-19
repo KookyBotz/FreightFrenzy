@@ -32,8 +32,8 @@ public class DrivetrainCommand extends CommandBase {
         this.odometry = odometry;
         this.telemetry = telemetry;
 
-        angleController = new PIDController(0.0065, 0, 0);
-        distanceController = new PIDController(0.05, 0, 0);
+        angleController = new PIDController(0.005, 0, 0.001);
+        distanceController = new PIDController(0.061, 0, 0);
     }
 
     public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry, double stablems) {
@@ -70,7 +70,7 @@ public class DrivetrainCommand extends CommandBase {
             tError = AngleUnit.normalizeDegrees(target.angle - robotPose.angle);
             if (Math.abs(tError) > 1) {
                 t = angleController.calculate(0, tError);
-                t += Math.signum(t) * 0.12;
+                t += Math.signum(t) * 0.15;
             }
         }
 

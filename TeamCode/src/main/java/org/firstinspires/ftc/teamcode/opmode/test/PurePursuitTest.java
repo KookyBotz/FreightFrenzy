@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp
+@Disabled
+
 public class PurePursuitTest extends OpMode {
     private Robot robot;
     private DifferentialDriveOdometry odometry;

@@ -12,6 +12,7 @@ public class PreloadRetractCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.arm.linkage(() -> 0)),
+                new WaitCommand(200),
                 new InstantCommand(() -> robot.arm.armIn()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 300),
                 new InstantCommand(() -> robot.bucket.in())

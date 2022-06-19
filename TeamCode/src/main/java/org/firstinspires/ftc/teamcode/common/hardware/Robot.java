@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -10,12 +11,13 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Arm;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Bucket;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytem.Intake;
@@ -24,6 +26,11 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+@Config
 public class Robot {
     public DifferentialDrive drive;
     public MotorGroup left;
@@ -45,6 +52,9 @@ public class Robot {
 
     public final OpenCvWebcam webcam, webcam2;
 
+
+    public static double MAX_CURRENT = 15;
+    private final List<LynxModule> hubs;
 
     public Robot(HardwareMap hardwareMap) {
         left_back = new MotorEx(hardwareMap, "lb", Motor.GoBILDA.RPM_435);
@@ -114,12 +124,43 @@ public class Robot {
 
         bucket = new Bucket(d, g, asyncSensor);
 
-        for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
+        for (LynxModule hub : hubs = hardwareMap.getAll(LynxModule.class)) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"));
+    }
+
+    public void currentUpdate(Telemetry telemetry) {
+        List<Double> current_list = new ArrayList<>();
+        current_list.add(left_back.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(left_middle.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(left_front.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(right_back.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(right_middle.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(right_front.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(i.motorEx.getCurrent(CurrentUnit.AMPS));
+        current_list.add(a.getCurrent(CurrentUnit.AMPS));
+
+        telemetry.addLine(String.format(Locale.ENGLISH, "left: %.2f, %.2f, %.2f right: %.2f, %.2f, %.2f intake: %.2f arm: %.2f",
+                current_list.get(0),
+                current_list.get(1),
+                current_list.get(2),
+                current_list.get(3),
+                current_list.get(4),
+                current_list.get(5),
+                current_list.get(6),
+                current_list.get(7)
+        ));
+
+        double current = 0;
+
+        for (LynxModule hub : hubs) {
+            current += hub.getCurrent(CurrentUnit.AMPS);
+        }
+
+        telemetry.addData("total current: ", current);
     }
 }

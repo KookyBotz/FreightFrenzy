@@ -11,11 +11,11 @@ public class Turret extends SubsystemBase {
     private final Servo left;
     private final Servo right;
 
-    public static double left_middle = 0.465;
-    public static double right_middle = 0.485;
+    public static double left_middle = 0.455;
+    public static double right_middle = 0.49;
 
 
-    public static double offset = 0.465;
+    public static double offset = 0.455;
 
     public Turret(Servo l, Servo r) {
         left = l;

@@ -15,7 +15,7 @@ public class DuckArmExtend extends SequentialCommandGroup {
                 new WaitUntilCommand(() -> robot.arm.pos() > 300),
                 new InstantCommand(alliance == Alliance.BLUE ? () -> robot.turret.left() : () -> robot.turret.right()),
                 new WaitCommand(200),
-                new InstantCommand(() -> robot.arm.linkage(() -> 0.7)),
+                new InstantCommand(() -> robot.arm.linkage(() -> 0.56)),
                 new InstantCommand(() -> robot.arm.armIn())
         );
     }

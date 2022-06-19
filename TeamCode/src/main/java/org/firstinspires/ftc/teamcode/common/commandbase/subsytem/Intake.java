@@ -25,10 +25,11 @@ public class Intake extends SubsystemBase {
     public void stop() {
         intake.set(0);
         double pos = intake.motorEx.getCurrentPosition();
-        int targetPos = (int) (pos + ((145.1 / 2.0 * 12.0 / 16.0) - (pos % (145.1 / 2.0 * 12.0 / 16.0))));
+        //int targetPos = (int) (pos + ((145.1 / 2.0 * 12.0 / 16.0) - (pos % (145.1 / 2.0 * 12.0 / 16.0))));
+        int targetPos = (int) (pos - (pos % (145.1 / 2.0 * 12.0 / 16.0)));
         intake.motorEx.setTargetPosition(targetPos);
         intake.motorEx.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.motorEx.setPower(1);
+        intake.motorEx.setPower(-1);
     }
 
     public void toggle() {

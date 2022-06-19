@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -23,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 @TeleOp
-public class teleop extends CommandOpMode {
+public class opmode extends CommandOpMode {
     private Robot robot;
     private BooleanSupplier outtake;
     private Consumer<Boolean> done;
@@ -35,6 +38,8 @@ public class teleop extends CommandOpMode {
 
     private boolean intakeToggle = false;
     private boolean flag = true;
+
+    private boolean pY = false;
 
     private ElapsedTime timer;
 
@@ -58,7 +63,7 @@ public class teleop extends CommandOpMode {
             timer = new ElapsedTime();
         }
 
-        if(timer.seconds() > 30 && timer.seconds() < 60 && flag){
+        if (timer.seconds() > 30 && timer.seconds() < 60 && flag) {
             gamepad1.rumble(500);
             flag = false;
         }
@@ -78,7 +83,7 @@ public class teleop extends CommandOpMode {
 
         robot.drive.arcadeDrive(
                 ether(-gamepad1.left_stick_y, 0.685, 0.06, 1),
-                ether(gamepad1.right_stick_x, 0.685, 0.06, 1)
+                ether(gamepad1.right_stick_x, 0.685, 0.09, 1)
         );
 
         boolean a = gamepad1.a;
@@ -99,26 +104,21 @@ public class teleop extends CommandOpMode {
         }
         intakeToggle = x;
 
+        boolean y = gamepad1.y;
+        if (y && !pY) {
+            robot.intake.intake.set(0.40);
+        }
+        pY = y;
+
         double time = System.currentTimeMillis();
         telemetry.addData("total loop time", time - loop);
 
-
-        telemetry.addLine(String.format(Locale.ENGLISH, "left: %.2f, %.2f, %.2f right: %.2f, %.2f, %.2f intake: %.2f arm: %.2f",
-                robot.left_back.motorEx.getCurrent(CurrentUnit.AMPS),
-                robot.left_middle.motorEx.getCurrent(CurrentUnit.AMPS),
-                robot.left_front.motorEx.getCurrent(CurrentUnit.AMPS),
-
-                robot.right_back.motorEx.getCurrent(CurrentUnit.AMPS),
-                robot.right_middle.motorEx.getCurrent(CurrentUnit.AMPS),
-                robot.right_front.motorEx.getCurrent(CurrentUnit.AMPS),
-
-                robot.i.motorEx.getCurrent(CurrentUnit.AMPS),
-                robot.a.getCurrent(CurrentUnit.AMPS)
-        ));
+        robot.currentUpdate(telemetry);
 
         telemetry.addData("intake ", robot.intake.intake.motorEx.getCurrentPosition());
 
         telemetry.addData("linkage ", gamepad1.right_trigger);
+
         telemetry.update();
 
         loop = System.currentTimeMillis();

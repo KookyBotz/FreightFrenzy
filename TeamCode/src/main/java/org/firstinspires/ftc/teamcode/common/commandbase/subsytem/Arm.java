@@ -93,7 +93,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void armShared() {
-        target = 710;
+        target = 715;
     }
 
     public void linkageIn() {
