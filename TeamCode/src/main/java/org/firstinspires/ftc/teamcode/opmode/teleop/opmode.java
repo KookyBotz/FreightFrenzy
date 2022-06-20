@@ -106,19 +106,28 @@ public class opmode extends CommandOpMode {
 
         boolean y = gamepad1.y;
         if (y && !pY) {
-            robot.intake.intake.set(0.40);
+            //robot.intake.intake.set(-0.40);
         }
         pY = y;
 
+        if(gamepad1.dpad_right){
+            alliance = Alliance.BLUE;
+        }
+
+        if(gamepad1.dpad_left){
+            alliance = Alliance.RED;
+        }
+
+        if(gamepad1.dpad_up){
+
+        }
+
         double time = System.currentTimeMillis();
-        telemetry.addData("total loop time", time - loop);
 
         robot.currentUpdate(telemetry);
-
+        telemetry.addData("total loop time", time - loop);
         telemetry.addData("intake ", robot.intake.intake.motorEx.getCurrentPosition());
-
         telemetry.addData("linkage ", gamepad1.right_trigger);
-
         telemetry.update();
 
         loop = System.currentTimeMillis();

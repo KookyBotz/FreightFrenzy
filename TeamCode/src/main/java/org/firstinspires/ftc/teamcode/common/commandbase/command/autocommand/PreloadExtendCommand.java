@@ -42,9 +42,9 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                     new DrivetrainCommand(new Pose(-20, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
                     new SequentialCommandGroup(
                             new InstantCommand(() -> robot.bucket.close()),
-                            new InstantCommand(() -> robot.arm.setPos(550)),
+                            new InstantCommand(() -> robot.arm.setPos(580)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.835))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0.885))
                     )
             );
         }

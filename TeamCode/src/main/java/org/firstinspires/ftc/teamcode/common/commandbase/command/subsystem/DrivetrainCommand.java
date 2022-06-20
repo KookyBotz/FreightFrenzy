@@ -32,7 +32,7 @@ public class DrivetrainCommand extends CommandBase {
         this.odometry = odometry;
         this.telemetry = telemetry;
 
-        angleController = new PIDController(0.005, 0, 0.001);
+        angleController = new PIDController(0.0052, 0, 0.001);
         distanceController = new PIDController(0.061, 0, 0);
     }
 

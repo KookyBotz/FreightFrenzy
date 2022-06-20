@@ -46,8 +46,6 @@ public class DuckieJankCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        FtcDashboard.getInstance().stopCameraStream();
-        FtcDashboard.getInstance().startCameraStream(robot.webcam2, 30);
         timer = new ElapsedTime();
     }
 

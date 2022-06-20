@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -12,13 +11,10 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.CycleDuckCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckArmExtend;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckArmRetract;
-import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckCycleExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckCycleOuttakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadDumpCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.PreloadRetractCommand;
@@ -95,16 +91,18 @@ public class BlueDuckAuto extends OpMode {
 
             }
         });
+        FtcDashboard.getInstance().stopCameraStream();
+        FtcDashboard.getInstance().startCameraStream(robot.webcam2, 30);
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new PreloadExtendCommand(robot, analysis, Alliance.BLUE, odometry, telemetry),
                         new PreloadDumpCommand(robot),
-                        new WaitCommand(500).andThen(new DrivetrainCommand(new Pose(-2.5, -20.5, -50), robot, odometry, telemetry, 750))
+                        new WaitCommand(500).andThen(new DrivetrainCommand(new Pose(-2.5, -20.5, -50), robot, odometry, telemetry, 0))
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
                         new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
-                        new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 1500,
+                        new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 500,
                                 new SequentialCommandGroup(
                                         new DrivetrainCommand(new Pose(-20, 5, -45), robot, odometry, telemetry, 1000)
                                                 .alongWith(
@@ -113,14 +111,14 @@ public class BlueDuckAuto extends OpMode {
                                                                         new SequentialCommandGroup(
                                                                                 new InstantCommand(() -> robot.intake.stop()),
                                                                                 new InstantCommand(() -> robot.bucket.close()),
-                                                                                new InstantCommand(() -> robot.arm.setPos(550)),
+                                                                                new InstantCommand(() -> robot.arm.setPos(580)),
                                                                                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 0.835))
+                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 0.885))
                                                                         )
                                                                 )
                                                 ),
                                         new PreloadDumpCommand(robot),
-                                        new DrivetrainCommand(new Pose(-18, 3, 90), robot, odometry, telemetry, 1500)
+                                        new DrivetrainCommand(new Pose(-18, 3, 90), robot, odometry, telemetry, 1000)
                                                 .alongWith(new PreloadRetractCommand(robot))
                                 )
 
