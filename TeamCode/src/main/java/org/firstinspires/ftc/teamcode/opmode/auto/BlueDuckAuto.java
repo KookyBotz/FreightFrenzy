@@ -102,18 +102,18 @@ public class BlueDuckAuto extends OpMode {
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
                         new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
-                        new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 500,
+                        new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 1000,
                                 new SequentialCommandGroup(
-                                        new DrivetrainCommand(new Pose(-20, 5, -45), robot, odometry, telemetry, 1000)
+                                        new DrivetrainCommand(new Pose(-18, 5, -45), robot, odometry, telemetry, 1000)
                                                 .alongWith(
                                                         new WaitCommand(1500)
                                                                 .andThen(
                                                                         new SequentialCommandGroup(
                                                                                 new InstantCommand(() -> robot.intake.stop()),
                                                                                 new InstantCommand(() -> robot.bucket.close()),
-                                                                                new InstantCommand(() -> robot.arm.setPos(580)),
+                                                                                new InstantCommand(() -> robot.arm.setPos(590)),
                                                                                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 0.885))
+                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 0.9))
                                                                         )
                                                                 )
                                                 ),

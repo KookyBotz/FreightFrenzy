@@ -19,7 +19,7 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
         double multiplier = alliance == Alliance.BLUE ? 1 : -1;
         if (analysis == BarcodePipeline.BarcodePosition.LEFT) { //bottom
             addCommands(
-                    new DrivetrainCommand(new Pose(-20, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
+                    new DrivetrainCommand(new Pose(-18, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
                     new SequentialCommandGroup(
                             new InstantCommand(() -> robot.bucket.close()),
                             new InstantCommand(() -> robot.arm.setPos(770)),
@@ -29,7 +29,7 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
             );
         } else if (analysis == BarcodePipeline.BarcodePosition.CENTER) {
             addCommands(
-                    new DrivetrainCommand(new Pose(-20, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
+                    new DrivetrainCommand(new Pose(-18, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
                     new SequentialCommandGroup(
                             new InstantCommand(() -> robot.bucket.close()),
                             new InstantCommand(() -> robot.arm.setPos(675)),
