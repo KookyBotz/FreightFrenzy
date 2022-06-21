@@ -115,7 +115,7 @@ public class BlueDuckAuto extends OpMode {
                                                                         new SequentialCommandGroup(
                                                                                 new InstantCommand(() -> robot.intake.stop()),
                                                                                 new InstantCommand(() -> robot.bucket.close()),
-                                                                                new InstantCommand(() -> robot.arm.setPos(590)),
+                                                                                new InstantCommand(() -> robot.arm.setPos(580)),
                                                                                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
                                                                                 new InstantCommand(() -> robot.arm.linkage(() -> 1))
                                                                         )

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.command.AllianceHubCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.CapCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.SharedCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.AllianceHubPreCommand;
 import org.firstinspires.ftc.teamcode.common.ff.Alliance;
@@ -19,7 +20,7 @@ import java.util.function.DoubleSupplier;
 @TeleOp
 public class opmode extends CommandOpMode {
     private Robot robot;
-    private BooleanSupplier outtake;
+    private BooleanSupplier outtake, cap;
     private Consumer<Boolean> done;
     private DoubleSupplier linkage, arm;
     private boolean intake = true;
@@ -31,6 +32,7 @@ public class opmode extends CommandOpMode {
     private boolean flag = true;
 
     private boolean pY = false;
+    private boolean pA = false;
 
     private ElapsedTime timer;
 
@@ -43,6 +45,7 @@ public class opmode extends CommandOpMode {
         done = (a) -> intake = a;
         linkage = () -> gamepad1.right_trigger;
         arm = () -> gamepad1.left_trigger;
+        cap = () -> gamepad1.b;
 
         robot.turret.middle();
         robot.arm.linkageIn();
@@ -76,7 +79,7 @@ public class opmode extends CommandOpMode {
 
         robot.drive.arcadeDrive(
                 ether(-gamepad1.left_stick_y, 0.685, 0.06, 1),
-                ether(gamepad1.right_stick_x, 0.685, 0.012, 1) / 2.0
+                ether(gamepad1.right_stick_x, 0.685, 0.012, 0.6)
         );
 
         boolean a = gamepad1.a;
@@ -111,6 +114,13 @@ public class opmode extends CommandOpMode {
         }
         pY = y;
 
+        boolean a_2 = gamepad2.a;
+        if(a_2 && !pA){
+            intake = false;
+            schedule(new CapCommand(robot, cap, done));
+        }
+        pA = a_2;
+
         if (gamepad1.dpad_right) {
             alliance = Alliance.BLUE;
         }
@@ -126,6 +136,8 @@ public class opmode extends CommandOpMode {
         if (gamepad1.dpad_down) {
             alliance_hub = false;
         }
+
+
 
         double time = System.currentTimeMillis();
 

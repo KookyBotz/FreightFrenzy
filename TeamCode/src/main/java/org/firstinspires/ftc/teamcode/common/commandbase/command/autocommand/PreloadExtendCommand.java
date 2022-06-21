@@ -34,7 +34,7 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                             new InstantCommand(() -> robot.bucket.close()),
                             new InstantCommand(() -> robot.arm.setPos(675)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.6))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0.62))
                     )
             );
         } else {
