@@ -1,26 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
-import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.AllianceHubCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.SharedCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.command.AllianceHubPreCommand;
 import org.firstinspires.ftc.teamcode.common.ff.Alliance;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
-import java.util.Locale;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -42,6 +33,8 @@ public class opmode extends CommandOpMode {
     private boolean pY = false;
 
     private ElapsedTime timer;
+
+    private boolean alliance_hub = false;
 
     @Override
     public void initialize() {
@@ -83,21 +76,26 @@ public class opmode extends CommandOpMode {
 
         robot.drive.arcadeDrive(
                 ether(-gamepad1.left_stick_y, 0.685, 0.06, 1),
-                ether(gamepad1.right_stick_x, 0.685, 0.09, 1)
+                ether(gamepad1.right_stick_x, 0.685, 0.012, 1) / 2.0
         );
 
         boolean a = gamepad1.a;
-        if (a && !extend) {
+        if (a && !extend && !alliance_hub) {
             schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
+        } else if (a && !extend && alliance_hub) {
+            schedule(new AllianceHubCommand(robot, outtake, done));
         }
         extend = a;
 
 
         if (intake && robot.bucket.hasFreight()) {
             intake = false;
-            schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
+            if (!alliance_hub) {
+                schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
+            } else {
+                schedule(new AllianceHubPreCommand(robot).andThen(new AllianceHubCommand(robot, outtake, done)));
+            }
         }
-
         boolean x = gamepad1.x;
         if (x && !intakeToggle) {
             robot.intake.toggle();
@@ -106,25 +104,34 @@ public class opmode extends CommandOpMode {
 
         boolean y = gamepad1.y;
         if (y && !pY) {
-            //robot.intake.intake.set(-0.40);
+            robot.intake.intake.motorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.intake.intake.motorEx.setPower(-0.50);
+        } else if (!y && pY) {
+            robot.intake.intake.set(0);
         }
         pY = y;
 
-        if(gamepad1.dpad_right){
+        if (gamepad1.dpad_right) {
             alliance = Alliance.BLUE;
         }
 
-        if(gamepad1.dpad_left){
+        if (gamepad1.dpad_left) {
             alliance = Alliance.RED;
         }
 
-        if(gamepad1.dpad_up){
+        if (gamepad1.dpad_up) {
+            alliance_hub = true;
+        }
 
+        if (gamepad1.dpad_down) {
+            alliance_hub = false;
         }
 
         double time = System.currentTimeMillis();
 
         robot.currentUpdate(telemetry);
+        telemetry.addData("alliance ", alliance.toString());
+        telemetry.addData("alliance hub", alliance_hub);
         telemetry.addData("total loop time", time - loop);
         telemetry.addData("intake ", robot.intake.intake.motorEx.getCurrentPosition());
         telemetry.addData("linkage ", gamepad1.right_trigger);

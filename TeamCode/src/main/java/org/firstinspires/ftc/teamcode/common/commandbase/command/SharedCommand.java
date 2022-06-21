@@ -24,8 +24,8 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitCommand(50),
                 new InstantCommand(() -> robot.intake.reverse()),
-                new InstantCommand(() -> robot.arm.armShared()),
                 new InstantCommand(() -> robot.bucket.rest()),
+                new InstantCommand(() -> robot.arm.armShared()),
                 new WaitUntilCommand(() -> robot.arm.pos() > 100),
                 new InstantCommand(() -> robot.turret.shared(alliance)),
                 new InstantCommand(robot.intake::stop),
@@ -47,14 +47,12 @@ public class SharedCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.turret.middle()),
                 new InstantCommand(() -> robot.arm.linkageIn()),
-                new WaitCommand(100),
                 new InstantCommand(() -> robot.arm.armIn()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 300),
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitUntilCommand(() -> robot.arm.pos() < 50),
-                new WaitCommand(50),
+                new WaitCommand(150),
                 new InstantCommand(() -> robot.intake.start()),
-                new InstantCommand(() -> robot.bucket.pastIn()),
                 new InstantCommand(() -> done.accept(true))
         );
     }

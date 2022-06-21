@@ -71,8 +71,8 @@ public class DuckieJankCommand extends CommandBase {
                 new SequentialCommandGroup(
                         new InstantCommand(() -> robot.intake.start()),
                         alliance == Alliance.BLUE ?
-                                new DrivetrainCommand(new Pose(-1, -15 + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
-                                new DrivetrainCommand(new Pose(-1, -(-15 + inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)),
+                                new DrivetrainCommand(new Pose(-2, -15 + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
+                                new DrivetrainCommand(new Pose(-2, -(-15 + inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)),
                         after
                 )
         );

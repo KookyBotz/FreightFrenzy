@@ -36,8 +36,8 @@ public class Arm extends SubsystemBase {
     private double voltage;
 
     private MotionProfile profile;
-    public static double max_v = 8000;
-    public static double max_a = 8000;
+    public static double max_v = 10000;
+    public static double max_a = 6000;
 
     private int target = 5;
     private int previous_target = 5;
@@ -93,7 +93,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void armShared() {
-        target = 715;
+        target = 705;
     }
 
     public void linkageIn() {

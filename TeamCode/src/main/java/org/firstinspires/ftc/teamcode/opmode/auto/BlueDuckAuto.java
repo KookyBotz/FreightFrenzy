@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -98,13 +99,16 @@ public class BlueDuckAuto extends OpMode {
                 new SequentialCommandGroup(
                         new PreloadExtendCommand(robot, analysis, Alliance.BLUE, odometry, telemetry),
                         new PreloadDumpCommand(robot),
-                        new WaitCommand(500).andThen(new DrivetrainCommand(new Pose(-2.5, -20.5, -50), robot, odometry, telemetry, 0))
+                        new WaitCommand(500)
+                                .andThen(
+                                        new ParallelDeadlineGroup(new WaitCommand(2400), new DrivetrainCommand(new Pose(-2.5, -20.5, -50), robot, odometry, telemetry, 0))
+                                )
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
                         new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
-                        new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 1000,
+                        new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 1500,
                                 new SequentialCommandGroup(
-                                        new DrivetrainCommand(new Pose(-18, 5, -45), robot, odometry, telemetry, 1000)
+                                        new DrivetrainCommand(new Pose(-16, 5, -45), robot, odometry, telemetry, 1000)
                                                 .alongWith(
                                                         new WaitCommand(1500)
                                                                 .andThen(
@@ -113,12 +117,12 @@ public class BlueDuckAuto extends OpMode {
                                                                                 new InstantCommand(() -> robot.bucket.close()),
                                                                                 new InstantCommand(() -> robot.arm.setPos(590)),
                                                                                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 0.9))
+                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 1))
                                                                         )
                                                                 )
                                                 ),
                                         new PreloadDumpCommand(robot),
-                                        new DrivetrainCommand(new Pose(-18, 3, 90), robot, odometry, telemetry, 1000)
+                                        new DrivetrainCommand(new Pose(-16, 3, 90), robot, odometry, telemetry, 1000)
                                                 .alongWith(new PreloadRetractCommand(robot))
                                 )
 
