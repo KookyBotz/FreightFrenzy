@@ -102,6 +102,7 @@ public class RedDuckAuto extends OpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
+                        new WaitCommand(3000),
                         new PreloadExtendCommand(robot, analysis, Alliance.RED, odometry, telemetry),
                         new PreloadDumpCommand(robot),
                         new WaitCommand(500)
@@ -113,7 +114,7 @@ public class RedDuckAuto extends OpMode {
                         new InstantCommand(() -> robot.intake.start()),
                         new WaitCommand(1000),
                         new InstantCommand(() -> robot.intake.stop()),
-                        new DrivetrainCommand(new Pose(-25, 15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
+                        new DrivetrainCommand(new Pose(-25, 17, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
                         new DuckieJankCommand(robot, pipeline2, Alliance.RED, odometry, telemetry, 1500,
                                 new SequentialCommandGroup(
                                         new DrivetrainCommand(new Pose(-18, -5, 45), robot, odometry, telemetry, 1000)

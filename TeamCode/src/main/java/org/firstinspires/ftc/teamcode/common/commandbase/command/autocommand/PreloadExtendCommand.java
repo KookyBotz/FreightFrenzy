@@ -24,7 +24,7 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                             new InstantCommand(() -> robot.bucket.close()),
                             new InstantCommand(() -> robot.arm.setPos(770)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.15))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0.225))
                     )
             );
         } else if (analysis == BarcodePipeline.BarcodePosition.CENTER) {
@@ -44,7 +44,7 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                             new InstantCommand(() -> robot.bucket.close()),
                             new InstantCommand(() -> robot.arm.setPos(530)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.9))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0.95))
                     )
             );
         }
