@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -11,6 +12,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.command.DuckieJankCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.CycleDuckCommand;
@@ -38,10 +40,12 @@ public class RedDuckAuto extends OpMode {
     private DuckPipeline2 pipeline2;
     private double loop;
 
+    private ElapsedTime time_since_start;
+
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, true);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
 
         robot.webcam.setPipeline(pipeline = new BarcodePipeline());
@@ -75,6 +79,8 @@ public class RedDuckAuto extends OpMode {
     }
 
     public void start() {
+        time_since_start = new ElapsedTime();
+
         analysis = pipeline.getAnalysis();
         robot.webcam.closeCameraDeviceAsync(() -> System.out.println("closed 1"));
 
@@ -91,33 +97,43 @@ public class RedDuckAuto extends OpMode {
 
             }
         });
+        FtcDashboard.getInstance().stopCameraStream();
+        FtcDashboard.getInstance().startCameraStream(robot.webcam2, 30);
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new PreloadExtendCommand(robot, analysis, Alliance.RED, odometry, telemetry),
                         new PreloadDumpCommand(robot),
-                        new WaitCommand(500).andThen(new DrivetrainCommand(new Pose(-3, 20.5, 50), robot, odometry, telemetry, 750))
+                        new WaitCommand(500)
+                                .andThen(
+                                        new ParallelDeadlineGroup(new WaitCommand(2400), new DrivetrainCommand(new Pose(-4.5, 20.5, 55), robot, odometry, telemetry, 0))
+                                )
                                 .alongWith(new PreloadRetractCommand(robot)),
-                        new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
+                        new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.RED)),
+                        new InstantCommand(() -> robot.intake.start()),
+                        new WaitCommand(1000),
+                        new InstantCommand(() -> robot.intake.stop()),
                         new DrivetrainCommand(new Pose(-25, 15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
                         new DuckieJankCommand(robot, pipeline2, Alliance.RED, odometry, telemetry, 1500,
                                 new SequentialCommandGroup(
-                                        new DrivetrainCommand(new Pose(-20, -5, 45), robot, odometry, telemetry, 1000)
+                                        new DrivetrainCommand(new Pose(-18, -5, 45), robot, odometry, telemetry, 1000)
                                                 .alongWith(
-                                                        new WaitCommand(500)
+                                                        new WaitCommand(1500)
                                                                 .andThen(
                                                                         new SequentialCommandGroup(
                                                                                 new InstantCommand(() -> robot.intake.stop()),
                                                                                 new InstantCommand(() -> robot.bucket.close()),
-                                                                                new InstantCommand(() -> robot.arm.setPos(550)),
+                                                                                new InstantCommand(() -> robot.arm.setPos(580)),
                                                                                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 0.835))
+                                                                                new InstantCommand(() -> robot.arm.linkage(() -> 1))
                                                                         )
                                                                 )
                                                 ),
                                         new PreloadDumpCommand(robot),
-                                        new DrivetrainCommand(new Pose(-18, -3, -90), robot, odometry, telemetry, 1500)
-                                                .alongWith(new PreloadRetractCommand(robot))
+                                        new DrivetrainCommand(new Pose(-16, -3, -90), robot, odometry, telemetry, 1000)
+                                                .alongWith(new PreloadRetractCommand(robot)),
+                                        new WaitUntilCommand(() -> time_since_start.seconds() > 28),
+                                        new DrivetrainCommand(new Pose(-18, -80, 0), robot, odometry, telemetry, 0, 0.8)
                                 )
 
                         )
@@ -151,5 +167,6 @@ public class RedDuckAuto extends OpMode {
     @Override
     public void stop() {
         robot.webcam2.closeCameraDevice();
+        CommandScheduler.getInstance().reset();
     }
 }

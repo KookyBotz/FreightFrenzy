@@ -21,7 +21,7 @@ import java.util.function.DoubleSupplier;
 public class opmode extends CommandOpMode {
     private Robot robot;
     private BooleanSupplier outtake, cap;
-    private Consumer<Boolean> done;
+    private Consumer<Boolean> done, done_capping;
     private DoubleSupplier linkage, arm;
     private boolean intake = true;
     private boolean extend;
@@ -38,11 +38,15 @@ public class opmode extends CommandOpMode {
 
     private boolean alliance_hub = false;
 
+    private boolean capping = false;
+
+
     @Override
     public void initialize() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, false);
         outtake = () -> gamepad1.right_bumper;
         done = (a) -> intake = a;
+        done_capping = (x) -> capping = !x;
         linkage = () -> gamepad1.right_trigger;
         arm = () -> gamepad1.left_trigger;
         cap = () -> gamepad1.b;
@@ -78,8 +82,8 @@ public class opmode extends CommandOpMode {
         robot.arm.loop();
 
         robot.drive.arcadeDrive(
-                ether(-gamepad1.left_stick_y, 0.685, 0.06, 1),
-                ether(gamepad1.right_stick_x, 0.685, 0.012, 0.6)
+                ether(-gamepad1.left_stick_y, 0.685, 0.06, 1) / (capping ? 2.5 : 1),
+                ether(gamepad1.right_stick_x, 0.685, 0.012, 0.6) / (capping ? 2 : 1)
         );
 
         boolean a = gamepad1.a;
@@ -108,7 +112,7 @@ public class opmode extends CommandOpMode {
         boolean y = gamepad1.y;
         if (y && !pY) {
             robot.intake.intake.motorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.intake.intake.motorEx.setPower(-0.50);
+            robot.intake.intake.motorEx.setPower(-0.45);
         } else if (!y && pY) {
             robot.intake.intake.set(0);
         }
@@ -117,7 +121,8 @@ public class opmode extends CommandOpMode {
         boolean a_2 = gamepad2.a;
         if(a_2 && !pA){
             intake = false;
-            schedule(new CapCommand(robot, cap, done));
+            capping = true;
+            schedule(new CapCommand(robot, cap, done, done_capping));
         }
         pA = a_2;
 

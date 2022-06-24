@@ -21,7 +21,7 @@ public class Arm extends SubsystemBase {
     private final Servo linkage;
     private final VoltageSensor batteryVoltageSensor;
 
-    public static double linkage_in = 0.93;
+    public static double linkage_in = 0.935;
 
     public static double linkage_out = 0.5;
 

@@ -12,7 +12,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class CapCommand extends SequentialCommandGroup {
-    public CapCommand(Robot robot, BooleanSupplier next, Consumer<Boolean> done) {
+    public CapCommand(Robot robot, BooleanSupplier next, Consumer<Boolean> done, Consumer<Boolean> done_capping) {
         super(
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.arm.setPos(700)),
@@ -24,7 +24,7 @@ public class CapCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(next),
                 new InstantCommand(() -> robot.bucket.close()),
                 new WaitCommand(500),
-                new InstantCommand(() -> robot.arm.setPos(450)),
+                new InstantCommand(() -> robot.arm.setPos(435)),
                 new InstantCommand(() -> robot.arm.linkage(() -> 1)),
                 new WaitCommand(1000),
                 new WaitUntilCommand(next),
@@ -33,7 +33,8 @@ public class CapCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.bucket.open()),
                 new WaitUntilCommand(next),
                 new PreloadRetractCommand(robot),
-                new InstantCommand(()->done.accept(true))
+                new InstantCommand(()->done.accept(true)),
+                new InstantCommand(()->done_capping.accept(true))
         );
     }
 }

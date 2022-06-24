@@ -30,7 +30,7 @@ public class DuckieJankCommand extends CommandBase {
     private final double time;
     private ElapsedTime timer;
 
-    public static double pixels_to_inches = 320 / 24.;
+    public static double pixels_to_inches = 320 / 22.;
 
     private final SequentialCommandGroup after;
 
@@ -59,7 +59,7 @@ public class DuckieJankCommand extends CommandBase {
         double pos = pipeline.getDuckie();
         robot.webcam2.closeCameraDeviceAsync(() -> System.out.println("closed 2"));
 
-        double inches = (pos - 160) / pixels_to_inches;
+        double inches = (pos - 150) / pixels_to_inches;
 
         if (pos == 0) {
             inches = 0;

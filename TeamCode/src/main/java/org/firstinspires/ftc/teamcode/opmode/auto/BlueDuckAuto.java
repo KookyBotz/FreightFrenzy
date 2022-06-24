@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
@@ -12,6 +13,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.CycleDuckCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.command.autocommand.DuckArmExtend;
@@ -39,10 +41,12 @@ public class BlueDuckAuto extends OpMode {
     private DuckPipeline2 pipeline2;
     private double loop;
 
+    private ElapsedTime time_since_start;
+
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, true);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
 
         robot.webcam.setPipeline(pipeline = new BarcodePipeline());
@@ -76,6 +80,8 @@ public class BlueDuckAuto extends OpMode {
     }
 
     public void start() {
+        time_since_start = new ElapsedTime();
+
         analysis = pipeline.getAnalysis();
         robot.webcam.closeCameraDeviceAsync(() -> System.out.println("closed 1"));
 
@@ -101,14 +107,17 @@ public class BlueDuckAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new WaitCommand(500)
                                 .andThen(
-                                        new ParallelDeadlineGroup(new WaitCommand(2400), new DrivetrainCommand(new Pose(-2.5, -20.5, -50), robot, odometry, telemetry, 0))
+                                        new ParallelDeadlineGroup(new WaitCommand(2400), new DrivetrainCommand(new Pose(-5, -20, -55), robot, odometry, telemetry, 0))
                                 )
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
+                        new InstantCommand(() -> robot.intake.start()),
+                        new WaitCommand(1000),
+                        new InstantCommand(() -> robot.intake.stop()),
                         new DrivetrainCommand(new Pose(-25, -15, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
                         new DuckieJankCommand(robot, pipeline2, Alliance.BLUE, odometry, telemetry, 1500,
                                 new SequentialCommandGroup(
-                                        new DrivetrainCommand(new Pose(-16, 5, -45), robot, odometry, telemetry, 1000)
+                                        new DrivetrainCommand(new Pose(-18, 5, -45), robot, odometry, telemetry, 1000)
                                                 .alongWith(
                                                         new WaitCommand(1500)
                                                                 .andThen(
@@ -123,8 +132,10 @@ public class BlueDuckAuto extends OpMode {
                                                 ),
                                         new PreloadDumpCommand(robot),
                                         new DrivetrainCommand(new Pose(-16, 3, 90), robot, odometry, telemetry, 1000)
-                                                .alongWith(new PreloadRetractCommand(robot))
-                                )
+                                                .alongWith(new PreloadRetractCommand(robot)),
+                                        new WaitUntilCommand(() -> time_since_start.seconds() > 28),
+                                        new DrivetrainCommand(new Pose(-18, 80, 0), robot, odometry, telemetry, 0, 0.8)
+                                 )
 
                         )
                 )
@@ -156,6 +167,8 @@ public class BlueDuckAuto extends OpMode {
 
     @Override
     public void stop() {
-        robot.webcam2.closeCameraDevice();
+        robot.webcam.closeCameraDeviceAsync(()-> System.out.print("cam 1 closed"));
+        robot.webcam2.closeCameraDeviceAsync(()-> System.out.print("cam 2 closed"));
+        CommandScheduler.getInstance().reset();
     }
 }

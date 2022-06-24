@@ -32,7 +32,7 @@ public class GoTo_Test extends OpMode {
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, false);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

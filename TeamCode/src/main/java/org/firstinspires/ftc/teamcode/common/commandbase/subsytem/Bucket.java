@@ -14,8 +14,8 @@ public class Bucket extends SubsystemBase {
     private final Servo gate;
     private final AsyncRev2MSensor distance;
 
-    public static double in_position = 0.675;
-    public static double rest_position = 0.595;
+    public static double in_position = 0.65;
+    public static double rest_position = 0.6;
     public static double dump_position = 0.845;
     public static double all_the_way = 0.985;
 

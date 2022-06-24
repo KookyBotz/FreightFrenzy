@@ -23,7 +23,7 @@ public class Subsystem_Tester extends CommandOpMode {
 
     @Override
     public void initialize() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, false);
         odometry = new DifferentialDriveOdometry(new Rotation2d(0));
         gamepad = new GamepadEx(gamepad1);
     }

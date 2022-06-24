@@ -26,14 +26,22 @@ public class DrivetrainCommand extends CommandBase {
 
     private boolean jitterhack = false;
 
+    private double max_speed = 0.5;
+
     public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry) {
         this.robot = robot;
         this.target = target;
         this.odometry = odometry;
         this.telemetry = telemetry;
 
-        angleController = new PIDController(0.0052, 0, 0.001);
+        angleController = new PIDController(0.0052, 0.015, 0.001);
         distanceController = new PIDController(0.061, 0, 0);
+    }
+
+    public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry, double stablems, double max_power) {
+        this(target, robot, odometry, telemetry, max_power);
+        this.stablems = stablems;
+        max_speed = max_power;
     }
 
     public DrivetrainCommand(Pose target, Robot robot, DifferentialDriveOdometry odometry, Telemetry telemetry, double stablems) {
@@ -76,8 +84,8 @@ public class DrivetrainCommand extends CommandBase {
 
         f *= Math.cos(Math.max(Math.min(Math.toRadians(tError * 3), Math.PI / 2), -Math.PI / 2));
 
-        f = Range.clip(f, -0.5, 0.5);
-        t = Range.clip(t, -0.5, 0.5);
+        f = Range.clip(f, -max_speed, max_speed);
+        t = Range.clip(t, -max_speed, max_speed);
 
         this.robot.drive.tankDrive((f + t) * voltageMultiplier, (f - t) * voltageMultiplier);
 

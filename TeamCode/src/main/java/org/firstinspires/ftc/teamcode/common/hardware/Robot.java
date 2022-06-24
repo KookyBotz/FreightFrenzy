@@ -50,13 +50,14 @@ public class Robot {
 
     public Intake intake;
 
-    public final OpenCvWebcam webcam, webcam2;
+    public OpenCvWebcam webcam, webcam2;
 
 
     public static double MAX_CURRENT = 15;
     private final List<LynxModule> hubs;
 
-    public Robot(HardwareMap hardwareMap) {
+
+    public Robot(HardwareMap hardwareMap, boolean camera) {
         left_back = new MotorEx(hardwareMap, "lb", Motor.GoBILDA.RPM_435);
         left_middle = new MotorEx(hardwareMap, "lm", Motor.GoBILDA.RPM_435);
         left_front = new MotorEx(hardwareMap, "lf", Motor.GoBILDA.RPM_435);
@@ -128,9 +129,11 @@ public class Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"));
+        if (camera) {
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"));
+        }
     }
 
     public void currentUpdate(Telemetry telemetry) {
