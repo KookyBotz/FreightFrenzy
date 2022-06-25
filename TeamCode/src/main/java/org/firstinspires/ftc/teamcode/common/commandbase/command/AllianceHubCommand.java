@@ -11,15 +11,15 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class AllianceHubCommand extends SequentialCommandGroup {
-    public AllianceHubCommand(Robot robot, BooleanSupplier outtake, Consumer<Boolean> done) {
+    public AllianceHubCommand(Robot robot, boolean middle, BooleanSupplier outtake, Consumer<Boolean> done) {
         super(
                 new InstantCommand(() -> robot.intake.stop()),
-                new InstantCommand(() -> robot.arm.setPos(485)),
+                new InstantCommand(() -> robot.arm.setPos(middle ? 675 : 485)),
                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
                 new InstantCommand(() -> robot.arm.linkage(() -> 0.7)),
                 new WaitUntilCommand(outtake),
                 new InstantCommand(() -> robot.bucket.open()),
-                new InstantCommand(() -> robot.bucket.dump_further()),
+                new InstantCommand(middle ? () -> robot.bucket.dump() : () -> robot.bucket.dump_further()),
                 new WaitCommand(500),
                 new InstantCommand(() -> robot.bucket.rest()),
                 new InstantCommand(() -> robot.arm.linkage(() -> 0)),

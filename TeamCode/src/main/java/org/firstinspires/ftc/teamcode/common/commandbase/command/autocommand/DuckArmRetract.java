@@ -17,9 +17,11 @@ public class DuckArmRetract extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.turret.middle()),
                 new InstantCommand(() -> robot.arm.linkage(() -> 0)),
                 new WaitCommand(200),
-                new InstantCommand(() -> robot.arm.armIn()),
-                new WaitCommand(175),
-                new InstantCommand(() -> robot.bucket.in())
+                new InstantCommand(() -> robot.arm.setPos(150)),
+                new WaitUntilCommand(() -> robot.arm.pos() < 175),
+                new InstantCommand(() -> robot.bucket.in()),
+                new WaitCommand(200),
+                new InstantCommand(() -> robot.arm.armIn())
         );
     }
 }

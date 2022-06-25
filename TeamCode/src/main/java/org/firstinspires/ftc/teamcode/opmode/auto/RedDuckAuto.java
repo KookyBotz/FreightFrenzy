@@ -111,8 +111,6 @@ public class RedDuckAuto extends OpMode {
                                 )
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.RED)),
-                        new InstantCommand(() -> robot.intake.start()),
-                        new WaitCommand(1000),
                         new InstantCommand(() -> robot.intake.stop()),
                         new DrivetrainCommand(new Pose(-25, 17, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
                         new DuckieJankCommand(robot, pipeline2, Alliance.RED, odometry, telemetry, 1500,
@@ -134,7 +132,7 @@ public class RedDuckAuto extends OpMode {
                                         new DrivetrainCommand(new Pose(-16, -3, -90), robot, odometry, telemetry, 1000)
                                                 .alongWith(new PreloadRetractCommand(robot)),
                                         new WaitUntilCommand(() -> time_since_start.seconds() > 28),
-                                        new DrivetrainCommand(new Pose(-18, -80, 0), robot, odometry, telemetry, 0, 0.8)
+                                        new DrivetrainCommand(new Pose(-22, -80, 0), robot, odometry, telemetry, 0, 0.8)
                                 )
 
                         )
@@ -167,7 +165,8 @@ public class RedDuckAuto extends OpMode {
 
     @Override
     public void stop() {
-        robot.webcam2.closeCameraDevice();
+        robot.webcam.closeCameraDeviceAsync(() -> System.out.print("cam 1 closed"));
+        robot.webcam2.closeCameraDeviceAsync(() -> System.out.print("cam 2 closed"));
         CommandScheduler.getInstance().reset();
     }
 }

@@ -59,7 +59,7 @@ public class DuckieJankCommand extends CommandBase {
         double pos = pipeline.getDuckie();
         robot.webcam2.closeCameraDeviceAsync(() -> System.out.println("closed 2"));
 
-        double inches = (pos - 150) / pixels_to_inches;
+        double inches = (pos - 160) / pixels_to_inches;
 
         if (pos == 0) {
             inches = 0;
@@ -67,12 +67,17 @@ public class DuckieJankCommand extends CommandBase {
 
         System.out.println("inches " + inches);
 
+        double robot_pos = odometry.getPoseMeters().getY();
+
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new InstantCommand(() -> robot.intake.start()),
                         alliance == Alliance.BLUE ?
-                                new DrivetrainCommand(new Pose(-2, -17 + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
-                                new DrivetrainCommand(new Pose(-2, -(-17 + inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)),
+                                new DrivetrainCommand(new Pose(-2, robot_pos + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
+                                new DrivetrainCommand(new Pose(-2, -(-robot_pos + inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)),
+                        alliance == Alliance.BLUE ?
+                                new DrivetrainCommand(new Pose(-5, -20, 0), robot, odometry, telemetry) :
+                                new DrivetrainCommand(new Pose(-5, 20, 0), robot, odometry, telemetry),
                         after
                 )
         );

@@ -19,7 +19,7 @@ public class CapCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
                 new InstantCommand(() -> robot.bucket.dump_further()),
                 new WaitUntilCommand(next),
-                new InstantCommand(() -> robot.arm.setPos(850)),
+                new InstantCommand(() -> robot.arm.setPos(870)),
                 new WaitCommand(500),
                 new WaitUntilCommand(next),
                 new InstantCommand(() -> robot.bucket.close()),
@@ -28,13 +28,20 @@ public class CapCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.arm.linkage(() -> 1)),
                 new WaitCommand(1000),
                 new WaitUntilCommand(next),
-                new InstantCommand(() -> robot.arm.setPos(500)),
+                new InstantCommand(() -> robot.arm.setPos(550)),
                 new WaitCommand(500),
                 new InstantCommand(() -> robot.bucket.open()),
                 new WaitUntilCommand(next),
-                new PreloadRetractCommand(robot),
-                new InstantCommand(()->done.accept(true)),
-                new InstantCommand(()->done_capping.accept(true))
+                new InstantCommand(() -> robot.bucket.rest()),
+                new InstantCommand(() -> robot.arm.setPos(150)),
+                new WaitCommand(100),
+                new InstantCommand(() -> robot.arm.linkage(() -> 0)),
+                new WaitUntilCommand(() -> robot.arm.pos() < 175),
+                new InstantCommand(() -> robot.bucket.in()),
+                new WaitCommand(200),
+                new InstantCommand(() -> robot.arm.armIn()),
+                new InstantCommand(() -> done.accept(true)),
+                new InstantCommand(() -> done_capping.accept(true))
         );
     }
 }

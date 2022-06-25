@@ -133,7 +133,7 @@ public class BlueDuckAuto extends OpMode {
                                         new DrivetrainCommand(new Pose(-16, 3, 90), robot, odometry, telemetry, 1000)
                                                 .alongWith(new PreloadRetractCommand(robot)),
                                         new WaitUntilCommand(() -> time_since_start.seconds() > 28),
-                                        new DrivetrainCommand(new Pose(-18, 80, 90), robot, odometry, telemetry, 0, 0.8)
+                                        new DrivetrainCommand(new Pose(-22, 80, 90), robot, odometry, telemetry, 0, 0.8)
                                  )
 
                         )

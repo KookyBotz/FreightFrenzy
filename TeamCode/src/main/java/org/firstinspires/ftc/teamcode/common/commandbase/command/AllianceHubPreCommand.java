@@ -13,7 +13,7 @@ public class AllianceHubPreCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.bucket.in()),
                 new WaitCommand(50),
                 new InstantCommand(() -> robot.intake.reverse()),
-                new WaitCommand(1000),
+                new WaitCommand(500),
                 new InstantCommand(()->robot.intake.stop())
         );
     }

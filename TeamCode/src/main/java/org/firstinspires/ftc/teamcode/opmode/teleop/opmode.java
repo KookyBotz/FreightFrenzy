@@ -37,6 +37,7 @@ public class opmode extends CommandOpMode {
     private ElapsedTime timer;
 
     private boolean alliance_hub = false;
+    private boolean middle = false;
 
     private boolean capping = false;
 
@@ -90,7 +91,7 @@ public class opmode extends CommandOpMode {
         if (a && !extend && !alliance_hub) {
             schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
         } else if (a && !extend && alliance_hub) {
-            schedule(new AllianceHubCommand(robot, outtake, done));
+            schedule(new AllianceHubCommand(robot, middle, outtake, done));
         }
         extend = a;
 
@@ -100,7 +101,7 @@ public class opmode extends CommandOpMode {
             if (!alliance_hub) {
                 schedule(new SharedCommand(robot, alliance, outtake, linkage, arm, done));
             } else {
-                schedule(new AllianceHubPreCommand(robot).andThen(new AllianceHubCommand(robot, outtake, done)));
+                schedule(new AllianceHubPreCommand(robot).andThen(new AllianceHubCommand(robot, middle, outtake, done)));
             }
         }
         boolean x = gamepad1.x;
@@ -119,7 +120,7 @@ public class opmode extends CommandOpMode {
         pY = y;
 
         boolean a_2 = gamepad2.a;
-        if(a_2 && !pA){
+        if (a_2 && !pA) {
             intake = false;
             capping = true;
             schedule(new CapCommand(robot, cap, done, done_capping));
@@ -135,7 +136,12 @@ public class opmode extends CommandOpMode {
         }
 
         if (gamepad1.dpad_up) {
-            alliance_hub = true;
+            if (!alliance_hub) {
+                alliance_hub = true;
+            } else {
+                middle = !middle;
+            }
+
         }
 
         if (gamepad1.dpad_down) {
@@ -143,12 +149,12 @@ public class opmode extends CommandOpMode {
         }
 
 
-
         double time = System.currentTimeMillis();
 
         robot.currentUpdate(telemetry);
         telemetry.addData("alliance ", alliance.toString());
         telemetry.addData("alliance hub", alliance_hub);
+        telemetry.addData("middle", middle);
         telemetry.addData("total loop time", time - loop);
         telemetry.addData("intake ", robot.intake.intake.motorEx.getCurrentPosition());
         telemetry.addData("linkage ", gamepad1.right_trigger);
