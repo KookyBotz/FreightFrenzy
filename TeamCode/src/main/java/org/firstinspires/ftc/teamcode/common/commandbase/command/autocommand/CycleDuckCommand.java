@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 @Config
 public class CycleDuckCommand extends SequentialCommandGroup {
-    public static double forward_power = 0.1;
+    public static double forward_power = 0.13;
     public static double duck_power = -0.25;
     public static long ms = 3500;
 

@@ -108,7 +108,7 @@ public class BlueDuckAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new WaitCommand(500)
                                 .andThen(
-                                        new ParallelDeadlineGroup(new WaitCommand(2400), new DrivetrainCommand(new Pose(-5, -20, -55), robot, odometry, telemetry, 0))
+                                        new ParallelDeadlineGroup(new WaitCommand(3000), new DrivetrainCommand(new Pose(-5, -20, -55), robot, odometry, telemetry, 1000))
                                 )
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.BLUE)),
@@ -132,9 +132,10 @@ public class BlueDuckAuto extends OpMode {
                                         new PreloadDumpCommand(robot),
                                         new DrivetrainCommand(new Pose(-16, 3, 90), robot, odometry, telemetry, 1000)
                                                 .alongWith(new PreloadRetractCommand(robot)),
-                                        new WaitUntilCommand(() -> time_since_start.seconds() > 28),
-                                        new DrivetrainCommand(new Pose(-22, 80, 90), robot, odometry, telemetry, 0, 0.8)
-                                 )
+                                        new DrivetrainCommand(new Pose(-16, -23, 0), robot, odometry, telemetry, 1000),
+                                        new DrivetrainCommand(new Pose(-28, -23, 0), robot, odometry, telemetry, 1000)
+
+                                )
 
                         )
                 )

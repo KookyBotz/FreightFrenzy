@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
@@ -72,12 +73,18 @@ public class DuckieJankCommand extends CommandBase {
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new InstantCommand(() -> robot.intake.start()),
-                        alliance == Alliance.BLUE ?
-                                new DrivetrainCommand(new Pose(-2, robot_pos + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
-                                new DrivetrainCommand(new Pose(-2, -(-robot_pos + inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)),
-                        alliance == Alliance.BLUE ?
-                                new DrivetrainCommand(new Pose(-5, -20, 0), robot, odometry, telemetry) :
-                                new DrivetrainCommand(new Pose(-5, 20, 0), robot, odometry, telemetry),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(2000),
+                                alliance == Alliance.BLUE ?
+                                        new DrivetrainCommand(new Pose(-2, robot_pos + inches, 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000)) :
+                                        new DrivetrainCommand(new Pose(-2, -(-robot_pos - inches), 0), robot, odometry, telemetry, 1000).alongWith(new WaitCommand(2000))
+                        ),
+//                        alliance == Alliance.BLUE ?
+//                                new DrivetrainCommand(new Pose(-5, -20, 0), robot, odometry, telemetry) :
+//                                new DrivetrainCommand(new Pose(-5, 20, 0), robot, odometry, telemetry),
+                        new InstantCommand(() -> robot.drive.tankDrive(-0.2, -0.2)),
+                        new WaitCommand(1000),
+                        new InstantCommand(() -> robot.drive.tankDrive(0, 0)),
                         after
                 )
         );

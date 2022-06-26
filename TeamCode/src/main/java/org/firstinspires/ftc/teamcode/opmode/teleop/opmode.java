@@ -55,7 +55,6 @@ public class opmode extends CommandOpMode {
         robot.turret.middle();
         robot.arm.linkageIn();
         robot.bucket.in();
-        robot.intake.start();
     }
 
     @Override
@@ -82,10 +81,10 @@ public class opmode extends CommandOpMode {
         super.run();
         robot.arm.loop();
 
-        robot.drive.arcadeDrive(
-                ether(-gamepad1.left_stick_y, 0.685, 0.06, 1) / (capping ? 2.5 : 1),
-                ether(gamepad1.right_stick_x, 0.685, 0.012, 0.6) / (capping ? 2 : 1)
-        );
+        double turn = ether(gamepad1.right_stick_x, 0.685, 0.012, 0.6) / (capping ? 2 : 1);
+        double forward = ether(-gamepad1.left_stick_y, 0.685, 0.06, 1) / (capping ? 2.5 : 1);
+
+        robot.drive.arcadeDrive(forward, turn);
 
         boolean a = gamepad1.a;
         if (a && !extend && !alliance_hub) {
@@ -169,9 +168,9 @@ public class opmode extends CommandOpMode {
 
     public double ether(double x, double p, double a_min, double a_max) {
         double v = p * Math.pow(x, 3) + (1 - p) * x;
-        if (x > 0.001) {
+        if (x > 0.003) {
             return a_max * (a_min + (1 - a_min)) * v;
-        } else if (x < -0.001) {
+        } else if (x < -0.003) {
             return a_max * (-a_min + (1 - a_min)) * v;
         } else {
             return 0;

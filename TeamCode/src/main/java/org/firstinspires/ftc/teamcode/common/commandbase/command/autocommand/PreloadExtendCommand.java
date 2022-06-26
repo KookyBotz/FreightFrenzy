@@ -22,9 +22,9 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                     new DrivetrainCommand(new Pose(-18, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
                     new SequentialCommandGroup(
                             new InstantCommand(() -> robot.bucket.close()),
-                            new InstantCommand(() -> robot.arm.setPos(750)),
+                            new InstantCommand(() -> robot.arm.setPos(770)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.3))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0))
                     )
             );
         } else if (analysis == BarcodePipeline.BarcodePosition.CENTER) {
@@ -32,9 +32,9 @@ public class PreloadExtendCommand extends ParallelCommandGroup {
                     new DrivetrainCommand(new Pose(-18, 5 * multiplier, -45 * multiplier), robot, odometry, telemetry),
                     new SequentialCommandGroup(
                             new InstantCommand(() -> robot.bucket.close()),
-                            new InstantCommand(() -> robot.arm.setPos(675)),
+                            new InstantCommand(() -> robot.arm.setPos(670)),
                             new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                            new InstantCommand(() -> robot.arm.linkage(() -> 0.62))
+                            new InstantCommand(() -> robot.arm.linkage(() -> 0.4))
                     )
             );
         } else {

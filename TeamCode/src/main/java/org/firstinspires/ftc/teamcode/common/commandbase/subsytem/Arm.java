@@ -110,7 +110,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void adjustArm(DoubleSupplier percentage) {
-        target = 710 + (int) (20 * percentage.getAsDouble());
+        target = 705 + (int) (50 * percentage.getAsDouble());
     }
 
     public double getCachePos() {

@@ -107,7 +107,7 @@ public class RedDuckAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new WaitCommand(500)
                                 .andThen(
-                                        new ParallelDeadlineGroup(new WaitCommand(2400), new DrivetrainCommand(new Pose(-4.5, 20.5, 55), robot, odometry, telemetry, 0))
+                                        new ParallelDeadlineGroup(new WaitCommand(3000), new DrivetrainCommand(new Pose(-4.5, 20.5, 55), robot, odometry, telemetry, 1000))
                                 )
                                 .alongWith(new PreloadRetractCommand(robot)),
                         new CycleDuckCommand(robot).alongWith(new DuckArmExtend(robot, Alliance.RED)),
@@ -115,14 +115,14 @@ public class RedDuckAuto extends OpMode {
                         new DrivetrainCommand(new Pose(-25, 17, 0), robot, odometry, telemetry, 750).alongWith(new DuckArmRetract(robot)),
                         new DuckieJankCommand(robot, pipeline2, Alliance.RED, odometry, telemetry, 1500,
                                 new SequentialCommandGroup(
-                                        new DrivetrainCommand(new Pose(-18, -5, 45), robot, odometry, telemetry, 1000)
+                                        new DrivetrainCommand(new Pose(-18, -5, 40), robot, odometry, telemetry, 1000)
                                                 .alongWith(
                                                         new WaitCommand(1500)
                                                                 .andThen(
                                                                         new SequentialCommandGroup(
                                                                                 new InstantCommand(() -> robot.intake.stop()),
                                                                                 new InstantCommand(() -> robot.bucket.close()),
-                                                                                new InstantCommand(() -> robot.arm.setPos(580)),
+                                                                                new InstantCommand(() -> robot.arm.setPos(560)),
                                                                                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
                                                                                 new InstantCommand(() -> robot.arm.linkage(() -> 1))
                                                                         )
@@ -131,8 +131,8 @@ public class RedDuckAuto extends OpMode {
                                         new PreloadDumpCommand(robot),
                                         new DrivetrainCommand(new Pose(-16, -3, -90), robot, odometry, telemetry, 1000)
                                                 .alongWith(new PreloadRetractCommand(robot)),
-                                        new WaitUntilCommand(() -> time_since_start.seconds() > 28),
-                                        new DrivetrainCommand(new Pose(-22, -80, 0), robot, odometry, telemetry, 0, 0.8)
+                                        new DrivetrainCommand(new Pose(-16, 23, 0), robot, odometry, telemetry, 1000),
+                                        new DrivetrainCommand(new Pose(-28, 23, 0), robot, odometry, telemetry, 1000)
                                 )
 
                         )

@@ -80,7 +80,7 @@ public class RedWarehouseAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new DrivetrainCommand(new Pose(-15, 0, -90), robot, odometry, telemetry, 0)
                                 .alongWith(new PreloadRetractCommand(robot)),
-                        new DrivetrainCommand(new Pose(-15, -34, -90), robot, odometry, telemetry, 500)
+                        new DrivetrainCommand(new Pose(-15, -34, -60), robot, odometry, telemetry, 500)
                                 .alongWith(new WaitCommand(1000)
                                         .andThen(new InstantCommand(() -> robot.intake.start()))),
                         new DrivetrainCommand(new Pose(-15, 10, -37.5), robot, odometry, telemetry, 500)
@@ -89,7 +89,7 @@ public class RedWarehouseAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new DrivetrainCommand(new Pose(-13, 5, -90), robot, odometry, telemetry, 500)
                                 .alongWith(new PreloadRetractCommand(robot)),
-                        new DrivetrainCommand(new Pose(-13, -38, -90), robot, odometry, telemetry, 500)
+                        new DrivetrainCommand(new Pose(-13, -36, -60), robot, odometry, telemetry, 500)
                                 .alongWith(new WaitCommand(1000)
                                         .andThen(new InstantCommand(() -> robot.intake.start()))),
                         new DrivetrainCommand(new Pose(-13, 15, -37.5), robot, odometry, telemetry, 500)
@@ -98,7 +98,7 @@ public class RedWarehouseAuto extends OpMode {
                         new PreloadDumpCommand(robot),
                         new DrivetrainCommand(new Pose(-13, 8, -90), robot, odometry, telemetry, 500)
                                 .alongWith(new PreloadRetractCommand(robot)),
-                        new DrivetrainCommand(new Pose(-13, -20, -90), robot, odometry, telemetry, 500)
+                        new DrivetrainCommand(new Pose(-13, -30, -90), robot, odometry, telemetry, 500)
                 )
         );
     }

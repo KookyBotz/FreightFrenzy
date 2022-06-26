@@ -13,9 +13,9 @@ public class AllianceHubAutoCommand extends SequentialCommandGroup {
                 new WaitCommand(1000),
                 new InstantCommand(() -> robot.intake.stop()),
                 new InstantCommand(() -> robot.bucket.close()),
-                new InstantCommand(() -> robot.arm.setPos(580)),
+                new InstantCommand(() -> robot.arm.setPos(550)),
                 new WaitUntilCommand(() -> robot.arm.pos() > 350),
-                new InstantCommand(() -> robot.arm.linkage(() -> 0.95))
+                new InstantCommand(() -> robot.arm.linkage(() -> 0.9))
         );
     }
 }
